@@ -214,7 +214,7 @@ const FRAGEN = [
 
     // ===== FORM UND RAUM =====
     {
-        id: 21,
+        id: 201,
         text: "Wie gut können Sie geometrische Zusammenhänge visualisieren?",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
@@ -228,7 +228,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 22,
+        id: 202,
         text: "Wie viele Ecken hat ein Oktaeder?",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
@@ -242,7 +242,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 23,
+        id: 203,
         text: "Interessieren Sie sich für räumliches Vorstellungsvermögen?",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum"],
@@ -256,7 +256,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 24,
+        id: 204,
         text: "Können Sie Schüler*innen beim Entdecken geometrischer Eigenschaften anleiten?",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
@@ -270,10 +270,10 @@ const FRAGEN = [
         ]
     },
     {
-        id: 204,
-        text: "Schätzen Sie im Folgenden <i>Ihre fachliche Kompetenz</i> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden arithmetische Begriffe und Symbole. Sie lesen und schreiben Zahlen.»",
+        id: 205,
+        text: "Schätzen Sie im Folgenden <i>Ihre fachliche Kompetenz</i> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden Begriffe und Symbole.»",
         bereich: "Form und Raum",
-        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
         ebene: "subjektiv",
         typ: "slider",
         antworten: [
@@ -281,6 +281,160 @@ const FRAGEN = [
             { text: "Wenig kompetent", wert: 1 },
             { text: "Kompetent", wert: 2 },
             { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 206,
+        text: "«Die Schülerinnen und Schüler können Figuren und Körper abbilden, zerlegen und zusammensetzen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+        {
+        id: 207,
+        text: "«Die Schülerinnen und Schüler können Längen, Flächen und Volumen bestimmen und berechnen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+            {
+        id: 208,
+        text: "«Die Schülerinnen und Schüler können geometrische Beziehungen, insbesondere zwischen Längen, Flächen und Volumen, erforschen, Vermutungen formulieren und Erkenntnisse austauschen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 209,
+        text: "«Die Schülerinnen und Schüler können Aussagen und Formeln zu geometrischen Beziehungen überprüfen, mit Beispielen belegen und begründen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 210,
+        text: "«Die Schülerinnen und Schüler können Körper und räumliche Beziehungen darstellen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 211,
+        text: "«Die Schülerinnen und Schüler können Figuren falten, skizzieren, zeichnen und konstruieren sowie Darstellungen zur ebenen Geometrie austauschen und überprüfen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 212,
+        text: "«Die Schülerinnen und Schüler können sich Figuren und Körper in verschiedenen Lagen vorstellen, Veränderungen darstellen und beschreiben (Kopfgeometrie).»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 213,
+        text: "«Die Schülerinnen und Schüler können in einem Koordinatensystem die Koordinaten von Figuren und Körpern bestimmen bzw. Figuren und Körper aufgrund ihrer Koordinaten darstellen sowie Pläne lesen und zeichnen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+        {
+        id: 214,
+        text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 215,
+        text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 216,
+        text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
         ]
     },
 

@@ -90,6 +90,47 @@
         <!-- Fragen-Seiten werden dynamisch generiert -->
         <!-- Hier kommt pro Bereich eine eigene Seite -->
         
+<!-- Neue Seite: Viererfeld-Analyse -->
+        <div class="page" id="page-priority">
+            <h2>Prioritätenmatrix - Ihr Entwicklungsbedarf</h2>
+            <p>
+                Diese Matrix zeigt Ihnen, in welchen Bereichen Sie sich prioritär weiterentwickeln sollten. 
+                Die Positionierung basiert auf Ihrem <strong>Interesse</strong> (horizontal) und Ihrem <strong>Weiterentwicklungsbedarf</strong> (vertikal).
+            </p>
+            
+            <div class="priority-container">
+                <canvas id="priorityCanvas" width="800" height="600"></canvas>
+                <div class="priority-legend">
+                    <div class="priority-explanation">
+                        <h4>Quadranten-Erklärung:</h4>
+                        <div class="quadrant-info">
+                            <div class="quadrant-item priority-1">
+                                <strong>1. Priorität</strong> (rechts oben)<br>
+                                Hoher Bedarf + Hohes Interesse
+                            </div>
+                            <div class="quadrant-item priority-2">
+                                <strong>2. Priorität</strong> (links oben)<br>
+                                Hoher Bedarf + Wenig Interesse
+                            </div>
+                            <div class="quadrant-item priority-3">
+                                <strong>3. Priorität</strong> (rechts unten)<br>
+                                Wenig Bedarf + Hohes Interesse
+                            </div>
+                            <div class="quadrant-item priority-4">
+                                <strong>Ohne Priorität</strong> (links unten)<br>
+                                Wenig Bedarf + Wenig Interesse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+                <strong>Hinweis:</strong> Der Weiterentwicklungsbedarf errechnet sich aus der Differenz zwischen Ihren aktuellen Kompetenzen 
+                und dem Maximalwert. Je niedriger Ihre Selbsteinschätzung, desto höher der Entwicklungsbedarf.
+            </p>
+        </div>
+
         <!-- Letzte Seite: Radar und Zusammenfassung -->
         <div class="page" id="page-final">
             <h2>Ihre Ergebnisse</h2>

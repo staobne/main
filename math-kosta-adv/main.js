@@ -118,7 +118,8 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE,
                 pageIndex++;
             });
             
-            // Final-Seite als letzte Seite hinzufügen
+            // Final-Seite und Prioritäts-Seite als letzte Seiten hinzufügen
+            pages.push('page-priority'); // Neue Viererfeld-Seite
             pages.push('page-final');
             
             // Fortschrittsanzeige erstellen
@@ -164,9 +165,9 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE,
                     return `
                         <div class="question-card">
                             <div class="question-title">${frage.text}</div>
-                            <!--- <div class="meta-info">
+                            <!---<div class="meta-info">
                                 Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
-                            </div> --->
+                            </div>--->
                             <div class="slider-container">
                                 <input 
                                     type="range" 
@@ -191,9 +192,9 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE,
                     return `
                         <div class="question-card">
                             <div class="question-title">${frage.text}</div>
-                            <!--- <div class="meta-info">
+                            <!---<div class="meta-info">
                                 Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
-                            </div> --->
+                            </div>--->
                             <div class="mc-group">
                                 ${frage.antworten.map((antwort, idx) => `
                                     <label class="mc-option">
@@ -788,7 +789,13 @@ function activateAndInitializePage(pageIndex) {
         newActivePage = document.getElementById('page-0');
         initializePersonalDataPage();
     } 
+    else if (pageIndex === pages.length) {
+        // Prioritäts-Seite (vorletzte Seite)
+        newActivePage = document.getElementById('page-priority');
+        initializePriorityPage();
+    }
     else if (pageIndex === pages.length + 1) {
+        // Final-Seite (letzte Seite)
         newActivePage = document.getElementById('page-final');
         initializeResultsPage();
     } 
@@ -885,6 +892,18 @@ function initializePersonalDataPage() {
     }
 }
 
+// Initialisierung der Prioritäts-Seite
+function initializePriorityPage() {
+    // Verzögerung zum Zeichnen des Viererfeld-Diagramms
+    setTimeout(() => {
+        try {
+            drawPriorityMatrix();
+        } catch (e) {
+            console.error("Fehler beim Zeichnen des Viererfeld-Charts:", e);
+        }
+    }, 100);
+}
+
 // Initialisierung der Ergebnisseite
 function initializeResultsPage() {
     renderPersonalData();
@@ -944,6 +963,8 @@ document.getElementById('nextButton').addEventListener('click', () => {
         window.addEventListener('resize', () => {
             if (currentPage === pages.length + 1) {
                 drawRadar(); // Radar-Chart neu zeichnen bei Grössenänderung
+            } else if (currentPage === pages.length) {
+                drawPriorityMatrix(); // Viererfeld neu zeichnen bei Grössenänderung
             }
         });
 
@@ -953,6 +974,235 @@ document.getElementById('nextButton').addEventListener('click', () => {
             
             // Erste Seite laden (Startseite)
             goToPage(0);
+        }
+
+        // =========================================================
+        // NEUE FUNKTIONEN FÜR VIERERFELD-ANALYSE
+        // =========================================================
+
+        // Berechnung der Prioritätspositionen für alle Analysebereiche
+        function calculatePriorityPositions() {
+            const analyseWerte = mapAntworten();
+            const priorityData = [];
+            
+            ANALYSE_BEREICHE.forEach(bereich => {
+                const bereichData = analyseWerte[bereich];
+                
+                // Durchschnittswerte berechnen
+                const subjektiv = durchschnitt(bereichData.subjektiv);
+                const objektiv = durchschnitt(bereichData.objektiv);
+                const interesse = durchschnitt(bereichData.interesse);
+                
+                // Weiterentwicklungsbedarf = umgekehrt zur Kompetenz
+                const kompetenz = (subjektiv + objektiv - 2) / 2;
+                const bedarf = MAX_WERT - kompetenz;
+                
+                // Position im Viererfeld bestimmen
+                const position = {
+                    bereich: bereich,
+                    x: interesse, // Interesse horizontal (0-3)
+                    y: bedarf,    // Bedarf vertikal (0-3)
+                    quadrant: getQuadrant(interesse, bedarf),
+                    kompetenz: kompetenz,
+                    interesse: interesse,
+                    bedarf: bedarf
+                };
+                
+                priorityData.push(position);
+            });
+            
+            return priorityData;
+        }
+
+        // Quadrant bestimmen
+        function getQuadrant(interesse, bedarf) {
+            const istHohesInteresse = interesse > 1.5; // > Mitte
+            const istHoherBedarf = bedarf > 1.5;       // > Mitte
+            
+            if (istHoherBedarf && istHohesInteresse) return "priority-1";    // 1. Priorität
+            if (istHoherBedarf && !istHohesInteresse) return "priority-2";   // 2. Priorität
+            if (!istHoherBedarf && istHohesInteresse) return "priority-3";   // 3. Priorität
+            return "priority-4"; // Ohne Priorität
+        }
+
+        // Viererfeld zeichnen
+        function drawPriorityMatrix() {
+            const canvas = document.getElementById('priorityCanvas');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Canvas löschen
+            ctx.clearRect(0, 0, width, height);
+            
+            // Grundeinstellungen
+            const margin = 80;
+            const chartWidth = width - 2 * margin;
+            const chartHeight = height - 2 * margin;
+            
+            // Prioritätsdaten laden
+            const priorityData = calculatePriorityPositions();
+            
+            // Achsen zeichnen
+            drawAxes(ctx, margin, chartWidth, chartHeight);
+            
+            // Quadranten zeichnen
+            drawQuadrants(ctx, margin, chartWidth, chartHeight);
+            
+            // Datenpunkte zeichnen
+            drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData);
+            
+            // Beschriftungen zeichnen
+            drawLabels(ctx, margin, chartWidth, chartHeight);
+        }
+
+        // Achsen zeichnen
+        function drawAxes(ctx, margin, chartWidth, chartHeight) {
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 2;
+            
+            // X-Achse (horizontal)
+            ctx.beginPath();
+            ctx.moveTo(margin, margin + chartHeight);
+            ctx.lineTo(margin + chartWidth, margin + chartHeight);
+            ctx.stroke();
+            
+            // Y-Achse (vertikal)
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, margin + chartHeight);
+            ctx.stroke();
+            
+            // Mittellinien für Quadranten
+            ctx.strokeStyle = '#9ca3af';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            
+            // Vertikale Mittellinie
+            ctx.beginPath();
+            ctx.moveTo(margin + chartWidth/2, margin);
+            ctx.lineTo(margin + chartWidth/2, margin + chartHeight);
+            ctx.stroke();
+            
+            // Horizontale Mittellinie
+            ctx.beginPath();
+            ctx.moveTo(margin, margin + chartHeight/2);
+            ctx.lineTo(margin + chartWidth, margin + chartHeight/2);
+            ctx.stroke();
+            
+            ctx.setLineDash([]); // Reset dash
+        }
+
+        // Quadranten einfärben
+        function drawQuadrants(ctx, margin, chartWidth, chartHeight) {
+            const halfWidth = chartWidth / 2;
+            const halfHeight = chartHeight / 2;
+            
+            // Quadrant 1: Rechts oben (Hoher Bedarf + Hohes Interesse) - Rot
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.1)';
+            ctx.fillRect(margin + halfWidth, margin, halfWidth, halfHeight);
+            
+            // Quadrant 2: Links oben (Hoher Bedarf + Wenig Interesse) - Orange
+            ctx.fillStyle = 'rgba(217, 119, 6, 0.1)';
+            ctx.fillRect(margin, margin, halfWidth, halfHeight);
+            
+            // Quadrant 3: Rechts unten (Wenig Bedarf + Hohes Interesse) - Blau
+            ctx.fillStyle = 'rgba(37, 99, 235, 0.1)';
+            ctx.fillRect(margin + halfWidth, margin + halfHeight, halfWidth, halfHeight);
+            
+            // Quadrant 4: Links unten (Wenig Bedarf + Wenig Interesse) - Grau
+            ctx.fillStyle = 'rgba(107, 114, 128, 0.1)';
+            ctx.fillRect(margin, margin + halfHeight, halfWidth, halfHeight);
+        }
+
+        // Datenpunkte zeichnen
+        function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
+            priorityData.forEach(point => {
+                // Pufferbereich definieren (15% an jeder Seite)
+                const padding = 0.15;
+                const usableWidth = chartWidth * (1 - 2 * padding);
+                const usableHeight = chartHeight * (1 - 2 * padding);
+                
+                // Position auf Canvas umrechnen mit Puffer (Y-Achse umkehren für Bedarf)
+                const x = margin + chartWidth * padding + (point.x / MAX_WERT) * usableWidth;
+                const y = margin + chartHeight * padding + (1 - point.y / MAX_WERT) * usableHeight;
+                
+                // Farbe je nach Quadrant
+                const colors = {
+                    'priority-1': '#dc2626', // Rot
+                    'priority-2': '#d97706', // Orange  
+                    'priority-3': '#2563eb', // Blau
+                    'priority-4': '#6b7280'  // Grau
+                };
+                
+                // Punkt zeichnen
+                ctx.fillStyle = colors[point.quadrant];
+                ctx.strokeStyle = colors[point.quadrant];
+                ctx.lineWidth = 2;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                // Bereichsname als Label
+                ctx.fillStyle = '#000';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                
+                // Text oberhalb des Punktes
+                const lines = splitBereichLabel(point.bereich);
+                ctx.fillText(lines[0], x, y - 15);
+                if (lines[1]) {
+                    ctx.fillText(lines[1], x, y - 3);
+                }
+            });
+            
+            ctx.textAlign = 'left'; // Reset
+        }
+
+        // Beschriftungen zeichnen
+        function drawLabels(ctx, margin, chartWidth, chartHeight) {
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 14px Arial';
+            
+            // X-Achsen-Beschriftung (Interesse)
+            ctx.textAlign = 'center';
+            ctx.fillText('Interesse', margin + chartWidth/2, margin + chartHeight + 40);
+            
+            // Y-Achsen-Beschriftung (Weiterentwicklungsbedarf)
+            ctx.save();
+            ctx.translate(20, margin + chartHeight/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('Weiterentwicklungsbedarf', 0, 0);
+            ctx.restore();
+            
+            // Skala-Beschriftungen
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#6b7280';
+            
+            // X-Achse Skala
+            ctx.textAlign = 'center';
+            ctx.fillText('niedrig', margin + chartWidth * 0.15, margin + chartHeight + 25);
+            ctx.fillText('hoch', margin + chartWidth * 0.85, margin + chartHeight + 25);
+            
+            // Y-Achse Skala
+            ctx.textAlign = 'center';
+            ctx.fillText('niedrig', margin - 50, margin + chartHeight * 0.85);
+            ctx.fillText('hoch', margin - 50, margin + chartHeight * 0.15);
+            
+            // Quadranten-Labels
+            ctx.font = 'bold 16px Arial';
+            ctx.fillStyle = '#000';
+            
+            ctx.fillText('1. Priorität', margin + chartWidth * 0.75, margin + 25);
+            ctx.fillText('2. Priorität', margin + chartWidth * 0.25, margin + 25);
+            ctx.fillText('3. Priorität', margin + chartWidth * 0.75, margin + chartHeight - 10);
+            ctx.fillText('Ohne Priorität', margin + chartWidth * 0.25, margin + chartHeight - 10);
+            
+            ctx.textAlign = 'left'; // Reset
         }
 
         // Starte die Anwendung nach dem vollständigen Laden des DOM
