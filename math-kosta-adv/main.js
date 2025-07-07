@@ -1,5 +1,5 @@
-import { BEREICHE, FRAGEN } from './fragen.js';
-import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config.js';
+import { FRAGEN } from './fragen.js';
+import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE, LERNGELEGENHEITEN } from './config.js';
 
         // =========================================================
         // FRAGENKATALOG - BEGINN
@@ -86,14 +86,14 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             // Startseite und persönliche Daten-Seite sind bereits im HTML vorhanden
             
             // Gruppiere Fragen nach Bereichen für bessere Organisation
-            const bereicheFragen = BEREICHE.reduce((acc, bereich) => {
+            const bereicheFragen = FRAGEN_BEREICHE.reduce((acc, bereich) => {
                 acc[bereich] = FRAGEN.filter(frage => frage.bereich === bereich);
                 return acc;
             }, {});
             
             // Erstelle für jeden Bereich eine eigene Fragensei
             let pageIndex = 1; // Start bei 1, weil 0 bereits persönliche Daten sind
-            BEREICHE.forEach(bereich => {
+            FRAGEN_BEREICHE.forEach(bereich => {
                 const pageId = `page-${pageIndex}`;
                 pages.push(pageId);
                 
@@ -152,7 +152,7 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             }
             
             const bereichIndex = currentPage - 2; // -2 wegen Start- und persönlicher Daten-Seite
-            const bereich = BEREICHE[bereichIndex];
+            const bereich = FRAGEN_BEREICHE[bereichIndex];
             const bereichContainer = document.getElementById(`bereich-${currentPage - 1}`);
             
             // Fragen für diesen Bereich filtern
@@ -164,9 +164,9 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                     return `
                         <div class="question-card">
                             <div class="question-title">${frage.text}</div>
-                            <div class="meta-info">
-                                Ebene: ${frage.ebene}
-                            </div>
+                            <!--- <div class="meta-info">
+                                Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
+                            </div> --->
                             <div class="slider-container">
                                 <input 
                                     type="range" 
@@ -191,9 +191,9 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                     return `
                         <div class="question-card">
                             <div class="question-title">${frage.text}</div>
-                            <div class="meta-info">
-                                Ebene: ${frage.ebene}
-                            </div>
+                            <!--- <div class="meta-info">
+                                Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
+                            </div> --->
                             <div class="mc-group">
                                 ${frage.antworten.map((antwort, idx) => `
                                     <label class="mc-option">
@@ -212,6 +212,30 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                     `;
                 }
             }).join('');
+        }
+
+        // NEUE FUNKTION: Mapping von Antworten auf Analysebereiche
+        function mapAntworten() {
+            const analyseWerte = {};
+            
+            // Initialisiere alle Analysebereiche
+            ANALYSE_BEREICHE.forEach(bereich => {
+                analyseWerte[bereich] = { subjektiv: [], objektiv: [], interesse: [] };
+            });
+            
+            // Verteile Antworten auf Analysebereiche basierend auf Handlungsaspekten
+            Object.entries(antworten).forEach(([fragenId, wert]) => {
+                const frage = FRAGEN.find(f => f.id === parseInt(fragenId));
+                if (frage && frage.handlungsaspekte) {
+                    frage.handlungsaspekte.forEach(aspekt => {
+                        if (analyseWerte[aspekt]) {
+                            analyseWerte[aspekt][frage.ebene].push(wert);
+                        }
+                    });
+                }
+            });
+            
+            return analyseWerte;
         }
 
         // Sammeln der persönlichen Daten aus dem Formular
@@ -298,20 +322,20 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
         function renderResultsSummary() {
             const resultContainer = document.getElementById('resultsSummary');
             
-            // Ergebnisse für jeden Bereich berechnen
-            const bereichErgebnisse = BEREICHE.map(bereich => {
-                const bereichFragen = FRAGEN.filter(frage => frage.bereich === bereich);
+            // Verwende die gemappten Analysewerte
+            const analyseWerte = mapAntworten();
+            
+            // Ergebnisse für jeden Analysebereich berechnen
+            const bereichErgebnisse = ANALYSE_BEREICHE.map(bereich => {
                 const ebenen = ['subjektiv', 'objektiv', 'interesse'];
                 
                 // Für jede Ebene Durchschnittswerte berechnen
                 const ebenenWerte = ebenen.map(ebene => {
-                    const ebenenFragen = bereichFragen.filter(frage => frage.ebene === ebene);
-                    const beantworteteFragen = ebenenFragen.filter(frage => antworten[frage.id] !== undefined);
+                    const werte = analyseWerte[bereich][ebene];
+                    if (werte.length === 0) return '0.0';
                     
-                    if (beantworteteFragen.length === 0) return 0;
-                    
-                    const summe = beantworteteFragen.reduce((sum, frage) => sum + antworten[frage.id], 0);
-                    return (summe / beantworteteFragen.length).toFixed(1);
+                    const summe = werte.reduce((sum, wert) => sum + wert, 0);
+                    return (summe / werte.length).toFixed(1);
                 });
                 
                 // HTML für einen Bereich generieren
@@ -470,8 +494,8 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             // Canvas löschen für Neuzeichnung
             ctx.clearRect(0, 0, width, height);
 
-            // Berechne Winkel zwischen Achsen basierend auf Anzahl der Bereiche
-            const anzahlBereiche = BEREICHE.length;
+            // Berechne Winkel zwischen Achsen basierend auf Anzahl der ANALYSE_BEREICHE
+            const anzahlBereiche = ANALYSE_BEREICHE.length;
             const winkel = (2 * Math.PI) / anzahlBereiche;
 
             // Hilfsfunktion zum Zeichnen der verschiedenen Marker
@@ -484,7 +508,6 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                     case 'circle': // Kreis für subjektive Werte
                         ctx.beginPath();
                         ctx.arc(x, y, 8, 0, 2 * Math.PI);
-                        //ctx.fill();
                         ctx.stroke();
                         break;
                     case 'triangle': // Dreieck für objektive Werte
@@ -493,13 +516,11 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                         ctx.lineTo(x + 9.2, y + 8);
                         ctx.lineTo(x - 9.2, y + 8);
                         ctx.closePath();
-                        //ctx.fill();
                         ctx.stroke();
                         break;
                     case 'square': // Quadrat für Interesse-Werte
                         ctx.beginPath();
                         ctx.rect(x - 6, y - 6, 12, 12);
-                        //ctx.fill();
                         ctx.stroke();
                         break;
                 }
@@ -536,7 +557,7 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             ctx.font = 'bold 30px Arial';
             ctx.fillStyle = '#000';
             
-            BEREICHE.forEach((bereich, i) => {
+            ANALYSE_BEREICHE.forEach((bereich, i) => {
                 const angle = i * winkel - Math.PI / 2;
                 const labelRadius = radius + 30; // Abstand für die Beschriftungen
                 let x = centerX + labelRadius * Math.cos(angle);
@@ -572,31 +593,19 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             // Zurücksetzen des textAlign
             ctx.textAlign = 'left';
 
-            // Daten aggregieren und normalisieren
-            const aggregierteWerte = BEREICHE.reduce((acc, bereich) => {
-                acc[bereich] = {
-                    subjektiv: [],
-                    objektiv: [],
-                    interesse: []
+            // NEUE DATENVERARBEITUNG: Verwende gemappte Werte
+            const analyseWerte = mapAntworten();
+
+            // Berechne Durchschnittswerte für jede Kategorie in jedem Analysebereich
+            const chartData = ANALYSE_BEREICHE.map(bereich => {
+                const bereichData = analyseWerte[bereich];
+                return {
+                    bereich,
+                    subjektiv: durchschnitt(bereichData.subjektiv),
+                    objektiv: durchschnitt(bereichData.objektiv),
+                    interesse: durchschnitt(bereichData.interesse)
                 };
-                return acc;
-            }, {});
-
-            // Sortiere Antworten nach Bereichen und Ebenen
-            Object.entries(antworten).forEach(([fragenId, wert]) => {
-                const frage = FRAGEN.find(f => f.id === parseInt(fragenId));
-                if (frage) {
-                    aggregierteWerte[frage.bereich][frage.ebene].push(wert);
-                }
             });
-
-            // Berechne Durchschnittswerte für jede Kategorie
-            const chartData = BEREICHE.map(bereich => ({
-                bereich,
-                subjektiv: durchschnitt(aggregierteWerte[bereich].subjektiv),
-                objektiv: durchschnitt(aggregierteWerte[bereich].objektiv),
-                interesse: durchschnitt(aggregierteWerte[bereich].interesse)
-            }));
 
             // Definition der Ebenen mit ihren Eigenschaften und den ausgewählten Farben
             const ebenen = [
@@ -657,7 +666,7 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                 // Subjektiv (Kreis)
                 const subjektivSVG = legendItems[0].querySelector('circle');
                 if (subjektivSVG) {
-                    subjektivSVG.setAttribute('fill', '#fff'); //anstatt subjektivColor
+                    subjektivSVG.setAttribute('fill', '#fff');
                     subjektivSVG.setAttribute('stroke', subjektivColor);
                 }
                 
@@ -701,10 +710,20 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
         
         // Hilfsfunktion: Bereichsnamen in zwei Zeilen aufteilen
         function splitBereichLabel(text) {
-            // Aufteilen bei ": " (z.B. "Lehrperson: Wissen" wird zu ["LP:", "Wissen"])
-            const match = text.match(/^([^:]+):\s*(.+)$/);
-            if (match) {
-                return [match[1] + ":", match[2]];
+            // Spezielle Behandlung für längere Begriffe
+            const replacements = {
+                "Lernbegleitung und Förderung": ["Lernbegleitung", "& Förderung"],
+                "Grössen und Funktionen": ["Grössen &", "Funktionen"],
+                "Operieren und Benennen": ["Operieren &", "Benennen"],
+                "Erforschen und Argumentieren": ["Erforschen &", "Argumentieren"],
+                "Mathematisieren und Darstellen": ["Mathematisieren", "& Darstellen"],
+                "Zahl und Variable": ["Zahl &", "Variable"],
+                "Form und Raum": ["Form &", "Raum"],
+                "Daten und Zufall": ["Daten &", "Zufall"]
+            };
+            
+            if (replacements[text]) {
+                return replacements[text];
             }
             
             // Fallback: Teile nach dem ersten Wort
@@ -946,4 +965,6 @@ document.getElementById('nextButton').addEventListener('click', () => {
             window.handleLerngelegenheitSelection = handleLerngelegenheitSelection;
             window.updateSelectedLerngelegenheitenDisplay = updateSelectedLerngelegenheitenDisplay;
             window.removeLerngelegenheit = removeLerngelegenheit;
+            window.updateChartColors = updateChartColors;
+            window.resetChartColors = resetChartColors;
         });

@@ -25,13 +25,13 @@ const FACH_BESCHREIBUNGEN = {
 
 // Bereiche für die Fragenorganisation (7 Seiten)
 const FRAGEN_BEREICHE = [
-    "Zahl und Variable",
-    "Form und Raum", 
-    "Grössen und Funktionen",
-    "Daten und Zufall",
-    "Planung",
-    "Beurteilung", 
-    "Lernbegleitung und Förderung"
+    "Zahl und Variable", //1
+    "Form und Raum",    //2
+    "Grössen und Funktionen",   //3
+    "Daten und Zufall", //4
+    "Planung",  //5
+    "Beurteilung", //6
+    "Lernbegleitung und Förderung" //6
 ];
 
 // Bereiche für die Radar-Analyse (10 Achsen)
@@ -49,6 +49,7 @@ const ANALYSE_BEREICHE = [
 ];
 
 // Liste der verfügbaren Lerngelegenheiten (für Mathematik angepasst)
+// id: Eindeutige Kennung der Lerngelegenheit, wird sonst nirgends benötigt.
 const LERNGELEGENHEITEN = [
     {
         id: "mikroplanung_math",
@@ -57,39 +58,27 @@ const LERNGELEGENHEITEN = [
         titel: "Mikroplanung Mathematik"
     },
     {
-        id: "makro_problemloesen",
+        id: "makro_erforschen",
         semester: "HS & FS",
         kategorie: "Makroplanung",
-        titel: "Problemlösen und Modellieren"
+        titel: "Erforschen und Argumentieren"
     },
     {
-        id: "digitale_medien_math",
+        id: "summative_beurteilung",
         semester: "HS & FS",
-        kategorie: "Digitale Medien",
-        titel: "Digitale Medien im Mathematikunterricht"
-    },
-    {
-        id: "differenzierung_math",
-        semester: "HS & FS",
-        kategorie: "Binnendifferenzierung",
-        titel: "Differenzierung im Mathematikunterricht"
+        kategorie: "Summative Beurteilung",
+        titel: "Summative Beurteilung Mathematikunterricht"
     },
     {
         id: "beurteilung_math",
         semester: "HS & FS",
-        kategorie: "Beurteilung",
-        titel: "Formative und summative Beurteilung in Mathematik"
-    },
-    {
-        id: "kommunikation_math",
-        semester: "HS",
-        kategorie: "Kommunikation",
-        titel: "Mathematische Kommunikation fördern"
+        kategorie: "Formative Beurteilung",
+        titel: "Formative Beurteilung in Mathematik"
     },
     {
         id: "rechenschwaeche",
         semester: "HS",
-        kategorie: "Förderung",
+        kategorie: "Beratung und Begleitung",
         titel: "Umgang mit Rechenschwäche"
     },
     {
