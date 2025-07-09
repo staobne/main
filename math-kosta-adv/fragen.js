@@ -440,7 +440,7 @@ const FRAGEN = [
 
     // ===== GRÖSSEN UND FUNKTIONEN =====
     {
-        id: 31,
+        id: 301,
         text: "Wie sicher sind Sie im Umgang mit proportionalen Zusammenhängen?",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
@@ -454,7 +454,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 32,
+        id: 302,
         text: "Ein Auto fährt mit konstanter Geschwindigkeit 60 km/h. Wie weit kommt es in 2.5 Stunden?",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
@@ -468,7 +468,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 33,
+        id: 303,
         text: "Wie interessiert sind Sie an funktionalen Zusammenhängen?",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen"],
@@ -482,7 +482,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 34,
+        id: 304,
         text: "Können Sie Lernende bei der Modellierung von Alltagssituationen unterstützen?",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
@@ -495,10 +495,94 @@ const FRAGEN = [
             { text: "Sehr gut", wert: 3 }
         ]
     },
+    {
+        id: 305,
+        text: "Schätzen Sie im Folgenden <i>Ihre fachliche Kompetenz</i> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden Begriffe und Symbole zu Grössen und Funktionen»",        
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 306,
+        text: "«Die Schülerinnen und Schüler können Grössen schätzen, messen, umwandeln, runden und mit ihnen rechnen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+        {
+        id: 307,
+        text: "«Die Schülerinnen und Schüler können funktionale Zusammenhänge beschreiben und Funktionswerte bestimmen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 308,
+        text: "«Die Schülerinnen und Schüler können zu Grössenbeziehungen und funktionalen Zusammenhängen Fragen formulieren, diese erforschen sowie Ergebnisse überprüfen und begründen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Erforschen und Argumentieren"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 309,
+        text: "«Die Schülerinnen und Schüler können Sachsituationen mathematisieren, darstellen, berechnen sowie Ergebnisse interpretieren und überprüfen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 310,
+        text: "«Die Schülerinnen und Schüler können Terme, Formeln, Gleichungen und Tabellen mit Sachsituationen konkretisieren.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
 
     // ===== DATEN UND ZUFALL =====
     {
-        id: 41,
+        id: 401,
         text: "Wie kompetent fühlen Sie sich bei der Interpretation von Diagrammen?",
         bereich: "Daten und Zufall",
         handlungsaspekte: ["Daten und Zufall", "Mathematisieren und Darstellen"],
@@ -512,7 +596,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 42,
+        id: 402,
         text: "Beim Werfen einer fairen Münze: Wie gross ist die Wahrscheinlichkeit für 'Kopf'?",
         bereich: "Daten und Zufall",
         handlungsaspekte: ["Daten und Zufall", "Operieren und Benennen"],
@@ -526,7 +610,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 43,
+        id: 403,
         text: "Interessieren Sie sich für Statistik und Wahrscheinlichkeitsrechnung?",
         bereich: "Daten und Zufall",
         handlungsaspekte: ["Daten und Zufall"],
@@ -540,7 +624,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 44,
+        id: 404,
         text: "Können Sie Schüler*innen beim kritischen Hinterfragen von Statistiken anleiten?",
         bereich: "Daten und Zufall",
         handlungsaspekte: ["Daten und Zufall", "Erforschen und Argumentieren"],
@@ -553,11 +637,53 @@ const FRAGEN = [
             { text: "Sehr gut", wert: 3 }
         ]
     },
+    {
+        id: 405,
+        text: "Schätzen Sie im Folgenden <i>Ihre fachliche Kompetenz</i> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden Begriffe und Symbole zu Daten und Zufall»",        
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Operieren und Benennen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 406,
+        text: "«Die Schülerinnen und Schüler können Sachsituationen zur Statistik, Kombinatorik und Wahrscheinlichkeit erforschen, Vermutungen formulieren und überprüfen.»",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Erforschen und Argumentieren"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 407,
+        text: "«Die Schülerinnen und Schüler können Daten zu Statistik, Kombinatorik und Wahrscheinlichkeit erheben, ordnen, darstellen, auswerten und interpretieren.»",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Mathematisieren und Darstellen"],
+        ebene: "subjektiv",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
 
     // ===== PLANUNG =====
     {
-        id: 51,
-        text: "Wie sicher fühlen Sie sich bei der Planung von Mathematikstunden?",
+        id: 501,
+        text: "Wie sicher fühlen Sie sich bei der Planung von Mathematikunterricht (einzelnen Lektionen)?",
         bereich: "Planung",
         handlungsaspekte: ["Planung"],
         ebene: "subjektiv",
@@ -570,8 +696,8 @@ const FRAGEN = [
         ]
     },
     {
-        id: 52,
-        text: "Was ist das wichtigste Element einer guten Mathematikstunde?",
+        id: 502,
+        text: "Aus dieser Auswahl: Welches ist das wichtigste Element von lernwirksamem Mathemattikunterricht?",
         bereich: "Planung",
         handlungsaspekte: ["Planung"],
         ebene: "objektiv",
@@ -584,7 +710,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 53,
+        id: 503,
         text: "Interessieren Sie sich für innovative Unterrichtsmethoden in Mathematik?",
         bereich: "Planung",
         handlungsaspekte: ["Planung"],
@@ -598,7 +724,7 @@ const FRAGEN = [
         ]
     },
     {
-        id: 54,
+        id: 504,
         text: "Können Sie Mathematikstunden an verschiedene Lernvoraussetzungen anpassen?",
         bereich: "Planung", 
         handlungsaspekte: ["Planung", "Lernbegleitung und Förderung"],
