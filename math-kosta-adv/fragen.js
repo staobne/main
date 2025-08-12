@@ -5,7 +5,7 @@ const FRAGEN = [
     // ===== ZAHL UND VARIABLE ===== id 1xx
     {
         id: 101,
-        text: "Wie sicher fühlen Sie sich beim Erklären und Formulieren von Förderhinwesien zu den Grundrechenarten?",
+        text: "Wie sicher fühlen Sie sich beim Erklären und Formulieren von Förderhinweisen zu den Grundrechenarten?",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -19,7 +19,7 @@ const FRAGEN = [
     },
     {
         id: 102,
-        text: "Wie sicher fühlen Sie sich beim Erklären und Formulieren von Förderhinwesien zum Stellenwertsystem?",
+        text: "Wie sicher fühlen Sie sich beim Erklären und Formulieren von Förderhinweisen zum Stellenwertsystem?",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
