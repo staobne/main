@@ -201,7 +201,7 @@ const FRAGEN = [
     },
     {
         id: 115,
-        text: "Eine lineare Gleichung hat immer genau eine Lösung.",
+        text: "Hat die Gleichung ax + b = 0 immer eine Lösung, wenn a und b reelle Zahlen sind?",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
         ebene: "objektiv",
