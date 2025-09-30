@@ -618,7 +618,7 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE,
             // Zeichne die Datenpunkte und Verbindungslinien für jede Ebene
             ebenen.forEach((ebene) => {
                 const punkte = chartData.map((data, i) => {
-                    const normalisierterWert = data[ebene.name] / 3; // Werte auf 0-1 normalisieren
+                    const normalisierterWert = (data[ebene.name]) / 3; // Werte auf 0-1 normalisieren
                     const angle = i * winkel - Math.PI / 2;
                     return {
                         x: centerX + ((radius * normalisierterWert)) * Math.cos(angle),
@@ -1116,56 +1116,143 @@ document.getElementById('nextButton').addEventListener('click', () => {
             ctx.fillRect(margin, margin + halfHeight, halfWidth, halfHeight);
         }
 
-        // Datenpunkte zeichnen
-        function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
-            priorityData.forEach(point => {
-                // Pufferbereich definieren (15% an jeder Seite)
-                const padding = 0.15;
-                const usableWidth = chartWidth * (1 - 2 * padding);
-                const usableHeight = chartHeight * (1 - 2 * padding);
-                
-                // Position auf Canvas umrechnen mit Puffer (Y-Achse umkehren für Bedarf)
-                const x = margin + chartWidth * padding + (point.x / MAX_WERT) * usableWidth;
-                const y = margin + chartHeight * padding + (1 - point.y / MAX_WERT) * usableHeight;
-                
-                // Farbe je nach Quadrant
-                const colors = {
-                    'priority-1': '#dc2626', // Rot
-                    'priority-2': '#d97706', // Orange  
-                    'priority-3': '#2563eb', // Blau
-                    'priority-4': '#6b7280'  // Grau
-                };
-                
-                // Punkt zeichnen
-                ctx.fillStyle = colors[point.quadrant];
-                ctx.strokeStyle = colors[point.quadrant];
-                ctx.lineWidth = 2;
-                
-                ctx.beginPath();
-                ctx.arc(x, y, 8, 0, 2 * Math.PI);
-                ctx.fill();
-                ctx.stroke();
-                
-                // Bereichsname als Label
-                ctx.fillStyle = '#000';
-                ctx.font = '12px Arial';
-                ctx.textAlign = 'center';
-                
-                // Text oberhalb des Punktes
-                const lines = splitBereichLabel(point.bereich);
-                ctx.fillText(lines[0], x, y - 15);
-                if (lines[1]) {
-                    ctx.fillText(lines[1], x, y - 3);
-                }
-            });
-            
-            ctx.textAlign = 'left'; // Reset
+// Datenpunkte zeichnen mit intelligenter Label-Positionierung
+function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
+    const padding = 0.15;
+    const usableWidth = chartWidth * (1 - 2 * padding);
+    const usableHeight = chartHeight * (1 - 2 * padding);
+    
+    // Farben je nach Quadrant
+    const colors = {
+        'priority-1': '#dc2626',
+        'priority-2': '#d97706',
+        'priority-3': '#2563eb',
+        'priority-4': '#6b7280'
+    };
+    
+    // Berechne Positionen für alle Punkte
+    const points = priorityData.map(point => {
+        const normalizedX = (point.x - 1) / 2;  // Berücksichtigt, dass Interesse von 1 bis 3 geht
+        const normalizedY = (point.y - 1) / 2;  // dito
+        const x = margin + chartWidth * padding + normalizedX * usableWidth;
+        const y = margin + chartHeight * padding + (1 - normalizedY) * usableHeight;
+        
+        return {
+            x: x,
+            y: y,
+            bereich: point.bereich,
+            quadrant: point.quadrant,
+            lines: splitBereichLabel(point.bereich)
+        };
+    });
+    
+    // Berechne Label-Positionen mit Kollisionsvermeidung
+    const labels = calculateLabelPositions(points, ctx);
+    
+    // Zeichne Verbindungslinien zu verschobenen Labels
+    labels.forEach((label, index) => {
+        const point = points[index];
+        
+        // Wenn Label verschoben wurde, zeichne dünne Verbindungslinie
+        const labelCenterX = label.x;
+        const labelCenterY = label.y;
+        const distance = Math.sqrt(Math.pow(labelCenterX - point.x, 2) + Math.pow(labelCenterY - point.y, 2));
+        
+        if (distance > 30) { // Nur bei größerer Verschiebung
+            ctx.strokeStyle = colors[point.quadrant];
+            ctx.lineWidth = 2;
+            ctx.setLineDash([2, 2]);
+            ctx.beginPath();
+            ctx.moveTo(point.x, point.y);
+            ctx.lineTo(labelCenterX, labelCenterY);
+            ctx.stroke();
+            ctx.setLineDash([]);
         }
+    });
+    
+    // Zeichne Punkte
+    points.forEach(point => {
+        ctx.fillStyle = colors[point.quadrant];
+        ctx.strokeStyle = colors[point.quadrant];
+        ctx.lineWidth = 2;
+        
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+    });
+    
+    // Zeichne Labels
+    ctx.font = '24px Arial';
+    labels.forEach((label, index) => {
+        const point = points[index];
+        
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+        
+        // Erste Zeile
+        ctx.fillText(point.lines[0], label.x, label.y - 5);
+        // Zweite Zeile
+        if (point.lines[1]) {
+            ctx.fillText(point.lines[1], label.x, label.y + 20);
+        }
+    });
+    
+    ctx.textAlign = 'left'; // Reset
+}
+
+// Hilfsfunktion: Berechne Label-Positionen mit Kollisionsvermeidung
+function calculateLabelPositions(points, ctx) {
+    ctx.font = '24px Arial';
+    
+    const labels = [];
+    const minDistance = 20; // Minimaler Abstand zwischen Labels
+    
+    points.forEach((point, index) => {
+        // Bevorzugte Positionen (in Reihenfolge): oben, unten, rechts, links. Mit den Zahlenwerten spielen, bis gut.
+        const positions = [
+            { x: point.x, y: point.y - 50, priority: 1 },      // oben
+            { x: point.x, y: point.y + 50, priority: 2 },      // unten
+            { x: point.x + 100, y: point.y, priority: 3 },      // rechts
+            { x: point.x - 100, y: point.y, priority: 4 },      // links
+
+        ];
+        
+        // Finde beste Position ohne Kollision
+        let bestPosition = positions[0];
+        
+        for (const pos of positions) {
+            let hasCollision = false;
+            
+            // Prüfe Kollision mit bereits platzierten Labels
+            for (const existingLabel of labels) {
+                const distance = Math.sqrt(
+                    Math.pow(pos.x - existingLabel.x, 2) + 
+                    Math.pow(pos.y - existingLabel.y, 2)
+                );
+                
+                if (distance < minDistance) {
+                    hasCollision = true;
+                    break;
+                }
+            }
+            
+            if (!hasCollision) {
+                bestPosition = pos;
+                break;
+            }
+        }
+        
+        labels.push(bestPosition);
+    });
+    
+    return labels;
+}
 
         // Beschriftungen zeichnen
         function drawLabels(ctx, margin, chartWidth, chartHeight) {
             ctx.fillStyle = '#374151';
-            ctx.font = 'bold 14px Arial';
+            ctx.font = 'bold 28px Arial';
             
             // X-Achsen-Beschriftung (Interesse)
             ctx.textAlign = 'center';
@@ -1173,47 +1260,43 @@ document.getElementById('nextButton').addEventListener('click', () => {
             
             // Y-Achsen-Beschriftung (Weiterentwicklungsbedarf)
             ctx.save();
-            ctx.translate(20, margin + chartHeight/2);
+            ctx.translate(40, margin + chartHeight/2);
             ctx.rotate(-Math.PI/2);
             ctx.fillText('Weiterentwicklungsbedarf', 0, 0);
             ctx.restore();
             
             // Skala-Beschriftungen
-            ctx.font = '12px Arial';
-            ctx.fillStyle = '#6b7280';
+            ctx.font = '20px Arial';
+            ctx.fillStyle = '#6b7280'; 
             
             // X-Achse Skala
             ctx.textAlign = 'center';
-            ctx.fillText('niedrig', margin + chartWidth * 0.15, margin + chartHeight + 25);
-            ctx.fillText('hoch', margin + chartWidth * 0.85, margin + chartHeight + 25);
+            ctx.fillText('niedrig', margin + chartWidth * 0.25, margin + chartHeight + 40);
+            ctx.fillText('hoch', margin + chartWidth * 0.75, margin + chartHeight + 40);
             
             // Y-Achse Skala
             ctx.textAlign = 'center';
-            ctx.fillText('niedrig', margin - 50, margin + chartHeight * 0.85);
-            ctx.fillText('hoch', margin - 50, margin + chartHeight * 0.15);
+            ctx.fillText('niedrig', margin - 40, margin + chartHeight * 0.85);
+            ctx.fillText('hoch', margin - 40, margin + chartHeight * 0.15);
             
             // Quadranten-Labels
-            ctx.font = 'bold 16px Arial';
+            ctx.font = 'bold 32px Arial';
             ctx.fillStyle = '#000';
             
-            ctx.fillText('1. Priorität', margin + chartWidth * 0.75, margin + 25);
-            ctx.fillText('2. Priorität', margin + chartWidth * 0.25, margin + 25);
-            ctx.fillText('3. Priorität', margin + chartWidth * 0.75, margin + chartHeight - 10);
-            ctx.fillText('Ohne Priorität', margin + chartWidth * 0.25, margin + chartHeight - 10);
+            ctx.fillText('1. Priorität', margin + chartWidth * 0.75, margin + 40);
+            ctx.fillText('2. Priorität', margin + chartWidth * 0.25, margin + 40);
+            ctx.fillText('3. Priorität', margin + chartWidth * 0.75, margin + chartHeight - 20);
+            ctx.fillText('Ohne Priorität', margin + chartWidth * 0.25, margin + chartHeight - 20);
             
             ctx.textAlign = 'left'; // Reset
         }
 
-        // =========================================================
-// HTML2CANVAS EXPORT FUNKTIONEN
+// =========================================================
+// HTML2CANVAS EXPORT FUNKTIONEN (ERWEITERT)
 // =========================================================
 
-async function exportPriorityPage() {
-    const page = document.getElementById('page-priority');
-    const button = page.querySelector('.export-button');
-    
-    // Button während Export deaktivieren
-    if (button) button.disabled = true;
+async function exportPageAsImage(pageId, filename, padding = 20) {
+    const page = document.getElementById(pageId);
     
     try {
         const canvas = await html2canvas(page, {
@@ -1226,63 +1309,181 @@ async function exportPriorityPage() {
                 const nav = clonedDoc.querySelector('.navigation');
                 if (nav) nav.style.display = 'none';
                 
-                // Export-Button im Klon ausblenden
-                const btn = clonedDoc.querySelector('.export-button');
-                if (btn) btn.style.display = 'none';
+                // Export-Buttons im Klon ausblenden
+                const buttons = clonedDoc.querySelectorAll('.export-button, .combined-export-button');
+                buttons.forEach(btn => btn.style.display = 'none');
+
+                // Farbauswahl-Container ausblenden
+                const colorPicker = clonedDoc.querySelector('.color-picker-container');
+                if (colorPicker) colorPicker.style.display = 'none';
             }
         });
         
-        canvas.toBlob(function(blob) {
+        // Neues Canvas mit Rand erstellen
+        const paddedCanvas = document.createElement('canvas');
+        paddedCanvas.width = canvas.width + (padding * 2);
+        paddedCanvas.height = canvas.height + (padding * 2);
+        
+        const ctx = paddedCanvas.getContext('2d');
+        
+        // Weißer Hintergrund mit Rand
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
+        
+        // Original-Canvas mit Abstand einfügen
+        ctx.drawImage(canvas, padding, padding);
+        
+        // Download
+        paddedCanvas.toBlob(function(blob) {
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
-            link.download = 'prioritaetsmatrix.png';
+            link.download = filename;
             link.href = url;
             link.click();
             URL.revokeObjectURL(url);
         });
+        
+        return true;
     } catch (error) {
         console.error('Fehler beim Export:', error);
-        alert('Fehler beim Exportieren. Bitte versuche es erneut.');
-    } finally {
-        if (button) button.disabled = false;
+        return false;
     }
 }
 
-async function exportFinalPage() {
-    const page = document.getElementById('page-final');
-    const button = page.querySelector('.export-button');
-    
+async function exportPriorityPage() {
+    const button = document.querySelector('#page-priority .export-button');
     if (button) button.disabled = true;
     
+    const success = await exportPageAsImage('page-priority', 'prioritaetsmatrix.png', 30);
+    
+    if (!success) {
+        alert('Fehler beim Exportieren. Bitte versuche es erneut.');
+    }
+    
+    if (button) button.disabled = false;
+}
+
+async function exportFinalPage() {
+    const button = document.querySelector('#page-final .export-button');
+    if (button) button.disabled = true;
+    
+    const success = await exportPageAsImage('page-final', 'kompetenzanalyse-ergebnis.png', 30);
+    
+    if (!success) {
+        alert('Fehler beim Exportieren. Bitte versuche es erneut.');
+    }
+    
+    if (button) button.disabled = false;
+}
+
+async function exportBothPages() {
+    const button = document.querySelector('.combined-export-button');
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Exportiere...';
+    }
+    
+    // Aktuelle Seite merken
+    const currentPageBackup = currentPage;
+    
+    // Beide Seiten referenzieren
+    const priorityPage = document.getElementById('page-priority');
+    const finalPage = document.getElementById('page-final');
+    
+    // Original Classes speichern
+    const priorityClasses = priorityPage.className;
+    const finalClasses = finalPage.className;
+    
     try {
-        const canvas = await html2canvas(page, {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            logging: false,
-            useCORS: true,
-            onclone: (clonedDoc) => {
-                // Navigation und Export-Button im Klon ausblenden
-                const nav = clonedDoc.querySelector('.navigation');
-                if (nav) nav.style.display = 'none';
-                
-                const btn = clonedDoc.querySelector('.export-button');
-                if (btn) btn.style.display = 'none';
-            }
+        // Priority-Seite aktivieren und exportieren
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none';
         });
         
-        canvas.toBlob(function(blob) {
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = 'kompetenzanalyse-ergebnis.png';
-            link.href = url;
-            link.click();
-            URL.revokeObjectURL(url);
-        });
+        priorityPage.classList.add('active');
+        priorityPage.style.display = 'block';
+        priorityPage.style.opacity = '1';
+        
+        // Canvas neu zeichnen mit voller Größe
+        await new Promise(resolve => setTimeout(resolve, 100));
+        drawPriorityMatrix();
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Erste Seite exportieren
+        const success1 = await exportPageAsImage('page-priority', '1_prioritaetsmatrix.png', 30);
+        
+        // Zur Final-Seite wechseln
+        priorityPage.classList.remove('active');
+        priorityPage.style.display = 'none';
+        
+        finalPage.classList.add('active');
+        finalPage.style.display = 'block';
+        finalPage.style.opacity = '1';
+        
+        // Canvas neu zeichnen mit voller Größe
+        await new Promise(resolve => setTimeout(resolve, 100));
+        drawRadar();
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Zweite Seite exportieren
+        const success2 = await exportPageAsImage('page-final', '2_kompetenzanalyse-ergebnis.png', 30);
+        
+        if (success1 && success2) {
+            // Erfolgsmeldung
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #10b981;
+                color: white;
+                padding: 20px 30px;
+                border-radius: 8px;
+                font-weight: bold;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            `;
+            message.textContent = 'Beide Seiten erfolgreich gespeichert!';
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.5s';
+                setTimeout(() => message.remove(), 500);
+            }, 2000);
+        } else {
+            alert('Fehler beim Exportieren einer oder beider Seiten.');
+        }
     } catch (error) {
-        console.error('Fehler beim Export:', error);
+        console.error('Fehler beim kombinierten Export:', error);
         alert('Fehler beim Exportieren. Bitte versuche es erneut.');
     } finally {
-        if (button) button.disabled = false;
+        // Zurück zur ursprünglichen Seite
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none';
+        });
+        
+        // Original-Seite wieder aktivieren
+        if (currentPageBackup === pages.length) {
+            priorityPage.classList.add('active');
+            priorityPage.style.display = 'block';
+            priorityPage.style.opacity = '1';
+            drawPriorityMatrix();
+        } else if (currentPageBackup === pages.length + 1) {
+            finalPage.classList.add('active');
+            finalPage.style.display = 'block';
+            finalPage.style.opacity = '1';
+            drawRadar();
+        }
+        
+        // Button wieder aktivieren
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Beide Ergebnisseiten als Bilder speichern';
+        }
     }
 }
 
@@ -1291,7 +1492,7 @@ async function exportFinalPage() {
 // =========================================================
 
 // Test-Daten: Mittlere bis hohe Werte für realistische Darstellung
-const TEST_ANTWORTEN = {
+/*const TEST_ANTWORTEN = {
     // Zahl und Variable
     101: 2, 102: 2, 103: 3, 104: 2, 105: 3, 106: 2, 107: 1, 
     108: 2, 109: 2, 110: 2, 111: 2, 112: 2, 113: 2, 114: 2, 115: 3,
@@ -1316,12 +1517,100 @@ const TEST_ANTWORTEN = {
     // Lernbegleitung und Förderung
     71: 2, 72: 3, 73: 2, 74: 2
 };
+*/
+
+const TEST_ANTWORTEN = {
+    // Zahl und Variable - gemischte Kompetenzen
+    101: 2,  // Grundrechenarten - eher unsicher
+    102: 2,  // Stellenwertsystem - eher sicher
+    103: 2,  // Multiplikation negativer Zahlen - korrekt
+    104: 2,  // LP21 Kompetenz
+    105: 2,  // Zählen und ordnen - sehr kompetent
+    106: 2,  // Grundoperationen - wenig kompetent
+    107: 2,  // Terme und Gleichungen - keine Kompetenz
+    108: 2,  // Zahlbeziehungen erforschen
+    109: 2,  // Aussagen erläutern
+    110: 2,  // Hilfsmittel nutzen - sehr kompetent
+    111: 2,  // Rechenwege darstellen
+    112: 2,  // Anzahlen veranschaulichen
+    113: 2,  // Zahlenmuster - gut
+    114: 2,  // Unterrichtsplanung Arithmetik - mittlere Kompetenz
+    115: 2,  // Gleichung ax+b=0 - falsch beantwortet
+    116: 1,  // Interesse Operieren und Benennen 
+    117: 1,  // Interesse Erforschen und Argumentieren 
+    118: 1,  // Interesse Mathematisieren und Darstellen
+    
+    // Form und Raum - stärkerer Bereich
+    201: 2,  // Geometrische Zusammenhänge visualisieren - sehr gut
+    202: 2,  // Oktaeder Ecken - korrekt
+    203: 1,  // Interesse räumliches Vorstellungsvermögen - sehr
+    204: 2,  // Geometrische Eigenschaften - sehr gut
+    205: 2,  // LP21 Begriffe und Symbole - sehr kompetent
+    206: 2,  // Figuren abbilden - kompetent
+    207: 2,  // Längen, Flächen, Volumen - kompetent
+    208: 2,  // Geometrische Beziehungen erforschen - kompetent
+    209: 2,  // Aussagen überprüfen - kompetent
+    210: 2,  // Körper darstellen - sehr kompetent
+    211: 2,  // Figuren zeichnen - sehr kompetent
+    212: 2,  // Kopfgeometrie - kompetent
+    213: 2,  // Koordinatensystem - kompetent
+    214: 1,  // Interesse Operieren und Benennen -
+    215: 1,  // Interesse Erforschen und Argumentieren - sehr interessiert
+    216: 1,  // Interesse Mathematisieren und Darstellen - sehr interessiert
+    
+    // Größen und Funktionen - mittlerer Bereich mit Schwächen
+    301: 3,  // Proportionale Zusammenhänge - sicher
+    302: 3,  // Auto Geschwindigkeit - korrekt
+    303: 2,  // Interesse funktionale Zusammenhänge - wenig
+    304: 3,  // Alltagssituationen modellieren - gut
+    305: 3,  // LP21 Begriffe - kompetent
+    306: 3,  // Größen schätzen - wenig kompetent
+    307: 3,  // Funktionale Zusammenhänge - wenig kompetent
+    308: 3,  // Größenbeziehungen erforschen - kompetent
+    309: 3,  // Sachsituationen mathematisieren - kompetent
+    310: 1,  // Terme konkretisieren - wenig kompetent
+    311: 2,  // Interesse Operieren und Benennen - wenig
+    312: 2,  // Interesse Erforschen und Argumentieren - wenig
+    313: 2,  // Interesse Mathematisieren und Darstellen - mittel
+    
+    // Daten und Zufall - schwächerer Bereich
+    401: 2,  // Diagramme interpretieren - eher wenig kompetent
+    402: 2,  // Münzwurf Wahrscheinlichkeit - korrekt
+    403: 1,  // Interesse Statistik - keine Antwort/wenig
+    404: 2,  // Statistiken hinterfragen - wenig
+    405: 2,  // LP21 Begriffe - wenig kompetent
+    406: 2,  // Sachsituationen erforschen - wenig kompetent
+    407: 2,  // Daten erheben und darstellen - kompetent
+    408: 1,  // Interesse Operieren und Benennen - keine Antwort/wenig
+    409: 1,  // Interesse Erforschen und Argumentieren - keine Antwort/wenig
+    410: 1,  // Interesse Mathematisieren und Darstellen - keine Antwort/wenig
+    
+    // Unterrichts- und Lernplanung
+    
+    // Planung - guter Bereich
+    501: 3,  // Unterrichtsplanung - sicher
+    502: 3,  // Lernwirksamer Unterricht - korrekt
+    503: 1,  // Interesse innovative Methoden - sehr
+    504: 3,  // Anpassung an Lernvoraussetzungen - gut
+    
+    // Beurteilung - mittlerer Bereich
+    61: 2,   // Beurteilung math. Leistungen - kompetent
+    62: 3,   // Formative Beurteilung - korrekt
+    63: 2,   // Interesse alternative Beurteilung - mittel
+    64: 2,   // Konstruktives Feedback - gut
+    
+    // Lernbegleitung und Förderung - Entwicklungsbedarf
+    71: 1,   // Individuelle Förderung - eher unsicher
+    72: 1,   // Fehleranalyse - korrekt
+    73: 3,   // Interesse Rechenschwäche - sehr
+    74: 1    // Begabungen fördern - keine Antwort/wenig
+};
 
 const TEST_PERSONAL_DATA = {
     vorname: 'Test',
     nachname: 'Person',
     matrikelnummer: '12345678',
-    email: 'test.person@ph.ch',
+    email: 'test.person@phbern.ch',
     studienfaecher: ['M', 'D', 'NT'],
     lerngelegenheiten: ['mikroplanung_math', 'beurteilung_math']
 };
@@ -1341,8 +1630,8 @@ function initTestMode() {
             keyBuffer = '';
         }, 2000); // Buffer nach 2 Sekunden zurücksetzen
         
-        // Prüfen ob "testingpurpose" eingegeben wurde
-        if (keyBuffer.includes('testingpurpose')) {
+        // Prüfen ob "testx" eingegeben wurde
+        if (keyBuffer.includes('testx')) {
             activateTestMode();
             keyBuffer = ''; // Buffer zurücksetzen
         }
@@ -1412,4 +1701,5 @@ function initTestMode() {
             window.resetChartColors = resetChartColors;
             window.exportPriorityPage = exportPriorityPage;     // NEU
             window.exportFinalPage = exportFinalPage;           // NEU
+            window.exportBothPages = exportBothPages;
         });

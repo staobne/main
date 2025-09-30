@@ -541,6 +541,10 @@
         background-color: #fafafa;
         max-width: 100%;
         height: auto;
+        width: 100%;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+        -ms-interpolation-mode: nearest-neighbor;
     }
     
     .priority-legend {

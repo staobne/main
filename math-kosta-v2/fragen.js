@@ -201,7 +201,7 @@ const FRAGEN = [
     },
     {
         id: 115,
-        text: "Hat die Gleichung ax + b = 0 immer eine Lösung, wenn a und b reelle Zahlen sind?",
+        text: "Die Gleichung ax + b = 0 hat immer eine Lösung, wenn a und b reelle Zahlen sind. Ist diese Aussage richtig oder falsch?",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
         ebene: "objektiv",
@@ -209,6 +209,48 @@ const FRAGEN = [
         antworten: [
             { text: "Richtig", wert: 1 },
             { text: "Falsch", wert: 3 } // korrekte Antwort
+        ]
+    },
+     {
+        id: 116,
+        text: "Inwiefern interessieren Sie sich für arithmetische und algebraische Inhalte im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 117,
+        text: "Inwiefern interessieren Sie sich für arithmetische und algebraische Inhalte im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 118,
+        text: "Inwiefern interessieren Sie sich für arithmetische und algebraische Inhalte im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
         ]
     },
 
@@ -399,7 +441,7 @@ const FRAGEN = [
         id: 214,
         text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Operieren und Benennen?",
         bereich: "Form und Raum",
-        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
         ebene: "interesse",
         typ: "slider",
         antworten: [
@@ -413,7 +455,7 @@ const FRAGEN = [
         id: 215,
         text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Erforschen und Argumentieren?",
         bereich: "Form und Raum",
-        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
         ebene: "interesse",
         typ: "slider",
         antworten: [
@@ -579,6 +621,48 @@ const FRAGEN = [
             { text: "Sehr kompetent", wert: 3 }
         ]
     },
+    {
+        id: 311,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereoichs Grössen und Funktionen im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 312,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereoichs Grössen und Funktionen im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Erforschen und Argumentieren"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 313,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereoichs Grössen und Funktionen im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
 
     // ===== DATEN UND ZUFALL =====
     {
@@ -677,6 +761,48 @@ const FRAGEN = [
             { text: "Wenig kompetent", wert: 1 },
             { text: "Kompetent", wert: 2 },
             { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+        {
+        id: 408,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereoichs Daten und Zufall im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Operieren und Benennen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 408,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereoichs Daten und Zufall im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Erforschen und Argumentieren"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 408,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereoichs Daten und Zufall im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
         ]
     },
 

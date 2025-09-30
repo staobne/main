@@ -63,6 +63,12 @@ const LERNGELEGENHEITEN = [
         kategorie: "Makroplanung",
         titel: "Erforschen und Argumentieren"
     },
+        {
+        id: "makro_planen",
+        semester: "HS & FS",
+        kategorie: "Makroplanung",
+        titel: "Makroplanung Mathematik: Lernprozesse planen"
+    },
     {
         id: "summative_beurteilung",
         semester: "HS & FS",
@@ -83,10 +89,10 @@ const LERNGELEGENHEITEN = [
     },
     {
         id: "alltagsbezug",
-        semester: "FS",
-        kategorie: "Anwendungsbezug",
-        titel: "Mathematik im Alltag"
-    }
+        semester: "HS & FS",
+        kategorie: "Fachkompetenz",
+        titel: "Mathematik als Produkt und Prozess"
+    },
 ];
 
 export { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE, LERNGELEGENHEITEN };
