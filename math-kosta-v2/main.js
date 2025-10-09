@@ -1244,7 +1244,7 @@ function calculateLabelPositions(points, ctx) {
             ctx.save();
             ctx.translate(40, margin + chartHeight/2);
             ctx.rotate(-Math.PI/2);
-            ctx.fillText('Weiterentwicklungsbedarf', 0, 0);
+            ctx.fillText('Weiterentwicklungspotenzial', 0, 0);
             ctx.restore();
             
             // Skala-Beschriftungen
