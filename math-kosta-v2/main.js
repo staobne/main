@@ -825,7 +825,7 @@ function updateUIElements() {
     // Navigation-Buttons aktualisieren
     document.getElementById('prevButton').disabled = currentPage === 0;
     document.getElementById('nextButton').textContent = 
-        currentPage === pages.length + 1 ? 'Abschliessen' : 'Weiter';
+        currentPage === pages.length + 1 ? 'Diese Seite drucken' : 'Weiter';
     
     // Fortschrittsanzeige aktualisieren
     updateProgressIndicator();
@@ -929,35 +929,17 @@ document.getElementById('prevButton').addEventListener('click', () => {
 document.getElementById('nextButton').addEventListener('click', () => {
     if (currentPage < pages.length + 1) {
         goToPage(currentPage + 1);
-        // Nach oben scrollen (bereits in goToPage integriert)
+        // Ändere diesen Code im nextButton Event-Listener
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
     } else {
         // Formular abschliessen und Druck-Dialog öffnen
         window.print();
     }
 });
-
-
-        // Event-Listener für Navigation-Buttons
-        document.getElementById('prevButton').addEventListener('click', () => {
-            if (currentPage > 0) {
-                goToPage(currentPage - 1);
-            }
-        });
-
-        document.getElementById('nextButton').addEventListener('click', () => {
-            if (currentPage < pages.length + 1) {
-                goToPage(currentPage + 1);
-                // Ändere diesen Code im nextButton Event-Listener
-                window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                });
-            } else {
-                // Formular abschliessen und Druck-Dialog öffnen
-                window.print();
-            }
-        });
 
         // Responsive Canvas-Anpassung bei Fenstergrössen-Änderung
         window.addEventListener('resize', () => {
