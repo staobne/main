@@ -555,7 +555,7 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE,
             ctx.stroke();
 
             // Beschriftungen der Achsen
-            ctx.font = 'bold 30px Arial';
+            ctx.font = 'bold 30px Roboto, sans-serif';
             ctx.fillStyle = '#000';
             
             ANALYSE_BEREICHE.forEach((bereich, i) => {
@@ -584,11 +584,11 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE,
                 const lines = splitBereichLabel(bereich);
                 
                 // Erste Zeile (kleiner Abstand nach oben)
-                ctx.font = 'bold 30px Arial';
+                ctx.font = 'bold 30px Roboto, sans-serif';
                 ctx.fillText(lines[0], x, y - 15);
                 
                 // Zweite Zeile (kleiner Abstand nach unten)
-                ctx.font = '30px Arial';
+                ctx.font = '30px Roboto, sans-serif';
                 ctx.fillText(lines[1], x, y + 15);
             });
             // Zurücksetzen des textAlign
@@ -1165,7 +1165,7 @@ function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
     });
     
     // Zeichne Labels
-    ctx.font = '24px Arial';
+    ctx.font = '24px Roboto, sans-serif';
     labels.forEach((label, index) => {
         const point = points[index];
         
@@ -1185,7 +1185,7 @@ function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
 
 // Hilfsfunktion: Berechne Label-Positionen mit Kollisionsvermeidung
 function calculateLabelPositions(points, ctx) {
-    ctx.font = '24px Arial';
+    ctx.font = '24px Roboto, sans-serif';
     
     const labels = [];
     const minDistance = 20; // Minimaler Abstand zwischen Labels
@@ -1234,7 +1234,7 @@ function calculateLabelPositions(points, ctx) {
         // Beschriftungen zeichnen
         function drawLabels(ctx, margin, chartWidth, chartHeight) {
             ctx.fillStyle = '#374151';
-            ctx.font = 'bold 28px Arial';
+            ctx.font = 'bold 28px Roboto, sans-serif';
             
             // X-Achsen-Beschriftung (Interesse)
             ctx.textAlign = 'center';
@@ -1248,7 +1248,7 @@ function calculateLabelPositions(points, ctx) {
             ctx.restore();
             
             // Skala-Beschriftungen
-            ctx.font = '20px Arial';
+            ctx.font = '20px Roboto, sans-serif';
             ctx.fillStyle = '#6b7280'; 
             
             // X-Achse Skala
@@ -1262,7 +1262,7 @@ function calculateLabelPositions(points, ctx) {
             ctx.fillText('hoch', margin - 40, margin + chartHeight * 0.15);
             
             // Quadranten-Labels
-            ctx.font = 'bold 32px Arial';
+            ctx.font = 'bold 32px Roboto, sans-serif';
             ctx.fillStyle = '#000';
             
             ctx.fillText('1. Priorität', margin + chartWidth * 0.75, margin + 40);
