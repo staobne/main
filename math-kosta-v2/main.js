@@ -1613,7 +1613,7 @@ function initTestMode() {
         }, 2000); // Buffer nach 2 Sekunden zurücksetzen
         
         // Prüfen ob "testx" eingegeben wurde
-        if (keyBuffer.includes('testx')) {
+        if (keyBuffer.includes('testing')) {
             activateTestMode();
             keyBuffer = ''; // Buffer zurücksetzen
         }
