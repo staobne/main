@@ -136,3 +136,28 @@ Aktivierung: Tastatureingabe `testing`
 3. 7 Fragebereiche
 4. Prioritätsmatrix (Viererfeld)
 5. Ergebnisse (Radar-Chart + Zusammenfassung)
+
+## Bekannte Probleme / Offene Punkte
+
+1. **Werte bei Labels**: Prädikat statt Zahlen anzeigen?
+2. **Sortierung Prioritäten**: Zuerst nach Bedarf, dann nach Interesse sortieren
+3. **Landing Page Design**: Farbschema überarbeiten (zu rund/blau/gelb)
+4. **Punkt-Positionen**: Quadranten-Zuordnung prüfen (Farbe vs. Position)
+5. **Spidergraph**: Verdeutlichen, dass höhere Einschätzung = besser
+6. **Reihenfolge**: Ev. Viererfeld und Radar-Chart tauschen
+7. **Legenden**: Quadranten-Erklärung mit Punkte-Legende zusammenführen
+
+## Globale Variablen
+
+```javascript
+priorityPointsData = []  // Speichert Punkt-Positionen für Hover-Detection
+```
+
+## CSS-Klassen (Viererfeld)
+
+| Klasse | Beschreibung |
+|--------|--------------|
+| `.priority-tooltip` | Hover-Tooltip (fixed, dark) |
+| `.priority-points-legend` | Container für Punkte-Legende |
+| `.legend-group` | Gruppierung nach Priorität |
+| `.legend-number` | Nummerierter Kreis |
