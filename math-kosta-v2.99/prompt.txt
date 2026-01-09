@@ -1,0 +1,50 @@
+Setze folgenden Plan im Ordner v2.99 um:
+arum nur 2 Dimensionen vollkommen ausreichend sind:
+
+Zweck der Analyse:
+
+Nicht summative Bewertung, sondern Selbstreflexion
+Grundlage für individuelle Entwicklungsplanung
+Bewusstmachung von Stärken und Entwicklungsfeldern
+
+
+Validität bei Masterstudierenden:
+
+Haben bereits Bachelor + Berufserfahrung
+Können ihre Kompetenzen meist realistisch einschätzen
+Selbsteinschätzung ist oft prädiktiver als einzelne Testfragen
+
+
+Für das Viererfeld perfekt:
+
+   X-Achse: Interesse (0-3)
+   Y-Achse: Entwicklungsbedarf = MAX_WERT - Selbsteinschätzung
+
+Radar-Chart:
+
+2 Ebenen (Selbsteinschätzung + Interesse) sind übersichtlicher
+Fokus auf die wirklich relevanten Dimensionen
+Keine "Scheinobjektivität"
+
+Was geändert werden müsste:
+
+fragen.js:
+
+ebene nur noch: "selbsteinschaetzung" oder "interesse"
+MC-Fragen streichen oder zu Selbsteinschätzung umformulieren
+
+
+main.js:
+
+Radar-Chart: 2 statt 3 Ebenen
+Mapping-Funktion anpassen
+Viererfeld: Bedarf = 3 - Selbsteinschätzung
+
+
+Labeling anpassen:
+
+"Selbsteinschätzung" statt "Subjektiv"
+Keine "Objektiv"-Ebene mehr
+
+Verweise für die Selbsteinschätzung den Hinweis auf die Standortbestimmung aus dem Bachelor. Hebe Selbsteinschätzung und Interesse dezent voneinander ab.
+Ergänze die didaktischen Bereiche um ein zwei weitere sinnvolle Selbsteinschätzungsfragen.

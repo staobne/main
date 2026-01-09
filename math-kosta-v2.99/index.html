@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kompetenzstandanalyse Mathematik Master V2.0</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap"> <!-- 100 - 900 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Kompetenzstandanalyse Mathematik Master</h1>
+        <div class="progress-indicator" id="progressIndicator">
+            <!-- Wird dynamisch gefüllt -->
+        </div>
+        
+        <!-- Startseite -->
+        <div class="page" id="page-start">
+            <div class="welcome-container">
+                <h2 class="welcome-header">Kompetenzstandanalyse Mathematik Master</h2>                
+                <div class="welcome-card">
+                    <div class="first-intro-container">
+                        <p>Willkommen zur Kompetenzstandanalyse für das Fach Mathematik im Masterstudium.</p>
+                        <p>Diese Analyse hilft Ihnen dabei, Ihr mathematisches Fachwissen, Ihre didaktischen Kompetenzen und Ihre Interessen zu reflektieren. Basierend auf den Ergebnissen stellt die Seite individuelle Empfehlungen für das Modul «Weiterentwicklung des fachspezifischen Unterrichtens» aus, die zu Ihrem Kompetenzprofil passen.</p>
+                        <p>Die Analyse ist keine Prüfung, sondern dient der Selbstreflexion und der gezielten Weiterentwicklung Ihrer mathematischen und didaktischen Kompetenzen. Antworten Sie daher bitte authentisch und zutreffend.</p>                    
+                    </div>
+                </div>
+                <div class="welcome-card">
+                    <div class="intro-text">
+                        <p>Der Fragebogen ist in folgende Dimensionen und Aspekte unterteilt:</p>
+                        <ul>
+                            <li><strong>Mathematische Kompetenzbereiche:</strong> Zahl und Variable, Form und Raum, Grössen und Funktionen, Daten und Zufall</li>
+                            <li><strong>Mathematische Handlungsaspekte:</strong> Operieren und Benennen, Erforschen und Argumentieren, Mathematisieren und Darstellen</li>
+                            <li><strong>Didaktische Kompetenzen:</strong> Planung, Beurteilung, Lernbegleitung und Förderung</li>
+                        </ul>
+                        <p>Nach Abschluss der Befragung erhalten Sie eine grafische Darstellung Ihrer Ergebnisse in Form eines Radar-Charts mit 10 Achsen, das Ihre Selbsteinschätzung, Ihr objektives Wissen und Ihre Interessen in den verschiedenen Bereichen visualisiert.</p>
+                        <p>Die Bearbeitung dauert ca. 20 – 25 Minuten. Nehmen Sie sich ausreichend Zeit, um die Fragen sorgfältig zu beantworten. Die Einschätzung des objektiven Wissens basiert auf einigen wenigen Aufgaben und ist mit viel Unsicherheit behaftet.</p>
+                        <p>Ihre Daten werden lokal in Ihrem Browser verarbeitet und nicht an Dritte weitergegeben.</p>
+                        <p>Klicken Sie auf «Weiter», um mit der Eingabe Ihrer persönlichen Daten zu beginnen.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seite 1: Persönliche Daten -->
+        <div class="page" id="page-0">
+            <div class="intro-text">
+                <p>Bitte füllen Sie zunächst Ihre persönlichen Daten aus und beantworten Sie dann die Fragen auf den folgenden Seiten.</p>
+            </div>
+            <div class="form-group">
+                <label for="vorname">Vorname</label>
+                <input type="text" id="vorname" name="vorname">
+            </div>
+            <div class="form-group">
+                <label for="nachname">Nachname</label>
+                <input type="text" id="nachname" name="nachname">
+            </div>
+            <div class="form-group">
+                <label for="matrikelnummer">Matrikelnummer</label>
+                <input type="text" id="matrikelnummer" name="matrikelnummer">
+            </div>
+            <div class="form-group">
+                <label for="email">E-Mail-Adresse an PH</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="form-group">
+                <label>Studienfächer (maximal 4 Fächer auswählbar)</label>
+                <div class="subjects-grid" id="subjects-container">
+                    <!-- Wird dynamisch durch JavaScript gefüllt -->
+                </div>
+                <div class="selection-counter" id="selection-counter">Ausgewählte Fächer: 0/4</div>
+            </div>
+            <div class="form-group">
+                <label>Besuchte Lerngelegenheiten im Bereich Mathematik</label>
+                <div class="custom-dropdown">
+                    <div class="selected-options" id="selected-lerngelegenheiten-display" onclick="document.getElementById('lerngelegenheiten-options').style.display = document.getElementById('lerngelegenheiten-options').style.display === 'block' ? 'none' : 'block';">
+                        <span class="placeholder">Bitte auswählen (Klicken zum Öffnen)...</span>
+                    </div>
+                    <div class="dropdown-options" id="lerngelegenheiten-options">
+                        <div class="search-container">
+                            <input type="text" id="lerngelegenheiten-search" placeholder="Suchen..." class="dropdown-search">
+                        </div>
+                        <div id="lerngelegenheiten-list">
+                            <!-- Wird dynamisch mit JavaScript gefüllt -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fragen-Seiten werden dynamisch generiert -->
+        <!-- Hier kommt pro Bereich eine eigene Seite -->
+        
+<!-- Neue Seite: Viererfeld-Analyse -->
+        <div class="page" id="page-priority">
+            <h2>Prioritätenmatrix – Ihr Entwicklungspotenzial</h2>
+            <p>
+                Diese Matrix zeigt Ihnen basierend auf Ihrer Selbsteinschätzung, in welchen Bereichen Sie sich prioritär weiterentwickeln sollten. 
+                Die Positionierung setzt sich zusammen aus Ihrem <strong>Interesse</strong> (horizontal) und Ihrem <strong>Weiterentwicklungspotenzial</strong> (vertikal).
+            </p>
+            
+            <div class="priority-container">
+                <canvas id="priorityCanvas" width="1200" height="1000"></canvas>
+                <div class="priority-legend">
+                    <div class="priority-explanation">
+                        <h4>Quadranten-Erklärung:</h4>
+                        <div class="quadrant-info">
+                            <div class="quadrant-item priority-1">
+                                <strong>1. Priorität</strong> (rechts oben)<br>
+                                Hoher Bedarf + Hohes Interesse
+                            </div>
+                            <div class="quadrant-item priority-2">
+                                <strong>2. Priorität</strong> (links oben)<br>
+                                Hoher Bedarf + Wenig Interesse
+                            </div>
+                            <div class="quadrant-item priority-3">
+                                <strong>3. Priorität</strong> (rechts unten)<br>
+                                Wenig Bedarf + Hohes Interesse
+                            </div>
+                            <div class="quadrant-item priority-4">
+                                <strong>Ohne Priorität</strong> (links unten)<br>
+                                Wenig Bedarf + Wenig Interesse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px; font-size: 0.9em; color: #666;">
+                <strong>Hinweis:</strong> Der Weiterentwicklungsbedarf errechnet sich aus der Differenz zwischen Ihren aktuellen Kompetenzen 
+                und dem Maximalwert. Je niedriger Ihre Selbsteinschätzung und der ermittelte objektive Wert, desto höher der Entwicklungsbedarf.<br><br>
+                Passen Sie die Breite des Fensters oder den Zoom Faktor des Browsers an, um das Seitenverhältnis des Bildes zu optimieren.
+            </p>
+            <div style="margin-top: 20px; display: flex; justify-content: center;">
+                <button class="nav-button export-button" onclick="exportPriorityPage()">
+                    Diese Seite als Bild speichern
+                </button>
+            </div>
+        </div>
+
+        <!-- Letzte Seite: Radar und Zusammenfassung -->
+        <div class="page" id="page-final">
+            <h2>Ihre Ergebnisse</h2>
+            <p>
+                Vielen Dank für die Beantwortung der Fragen zur Mathematik-Kompetenzstandanalyse. Hier ist die Zusammenfassung Ihrer Ergebnisse.<br><br>
+                <strong>Das Radar-Chart zeigt Ihre Kompetenzen in 10 Bereichen:</strong>
+            </p>
+            <ul style="margin-bottom: 20px;">
+                <li><strong>Mathematische Kompetenzbereiche:</strong> Zahl und Variable, Form und Raum, Grössen und Funktionen, Daten und Zufall</li>
+                <li><strong>Handlungsaspekte:</strong> Operieren und Benennen, Erforschen und Argumentieren, Mathematisieren und Darstellen</li>
+                <li><strong>Didaktische Kompetenzen:</strong> Planung, Beurteilung, Lernbegleitung und Förderung</li>
+            </ul>
+            <p>
+                Drücken Sie «Beide Ergebnisseiten als Bilder speichern», um sowohl diese Seite als auch die Prioritätenmatrix als Bilddateien zu speichern. Alternativ können Sie «Diese Seite als Bild speichern» verwenden, um nur die aktuelle Seite zu speichern.<br><br>
+                Drücken Sie auf «Diese Seite drucken», falls Sie diese Seite drucken oder als PDF speichern möchten.<br><br>
+                Fügen Sie die Ergebnisse im schriftlichen Teil der Kompetenzstandanalyse ein und nutzen Sie die Ergebnisse, um Ihren Fokus für das Mastermodul einzugrenzen. Dieses Dokument bildet Grundlage für das Kick-Off Gespräch.
+            </p>
+            
+            <div class="grid results-grid">
+                <div>
+                    <!-- Persönliche Daten Sektion -->
+                    <div class="personal-data-section">
+                        <h3>Persönliche Daten</h3>
+                        <div id="personalDataSummary">
+                            <!-- Wird dynamisch gefüllt -->
+                        </div>
+                    </div>
+                    
+                    <!-- Ergebnisse nach Bereichen -->
+                    <div class="summary-section">
+                        <h3>Ergebnisse nach Bereichen</h3>
+                        <div id="resultsSummary">
+                            <!-- Wird dynamisch gefüllt -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Radar Graph Container -->
+                <div class="radar-container">
+                    <canvas id="radarCanvas" width="1000" height="1000"></canvas>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <svg width="30" height="15" viewBox="0 0 30 15">
+                                <circle cx="15" cy="7.5" r="6" fill="rgba(37, 99, 235, 0.9)" stroke="rgba(37, 99, 235, 0.9)" stroke-width="2"/>
+                            </svg>
+                            <span>Subjektiv</span>
+                        </div>
+                        <div class="legend-item">
+                            <svg width="30" height="15" viewBox="0 0 30 15">
+                                <path d="M15,2 L21.9,14 L8.1,14 Z" fill="rgba(256, 256, 256, 0.9)" stroke="rgba(22, 163, 74, 0.9)" stroke-width="2"/>
+                            </svg>
+                            <span>Objektiv</span>
+                        </div>
+                        <div class="legend-item">
+                            <svg width="30" height="15" viewBox="0 0 30 15">
+                                <rect x="9" y="1.5" width="12" height="12" fill="rgba(220, 38, 38, 0.9)" stroke="rgba(220, 38, 38, 0.9)" stroke-width="2"/>
+                            </svg>
+                            <span>Interesse</span>
+                        </div>
+                    </div>
+                    <div class="color-picker-container">
+                        <h4>Farbgestaltung anpassen:</h4>
+                        <div class="color-picker-row">
+                            <label>
+                                <input type="color" id="subjektiv-color" value="#2563eb" onchange="updateChartColors()">
+                                Subjektiv
+                            </label>
+                            <label>
+                                <input type="color" id="objektiv-color" value="#16a34a" onchange="updateChartColors()">
+                                Objektiv
+                            </label>
+                            <label>
+                                <input type="color" id="interesse-color" value="#dc2626" onchange="updateChartColors()">
+                                Interesse
+                            </label>
+                            <button class="reset-colors-btn" onclick="resetChartColors()">Standardfarben</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+            <button class="nav-button export-button" onclick="exportFinalPage()">
+                Diese Seite als Bild speichern
+            </button>
+            <button class="nav-button combined-export-button" onclick="exportBothPages()">
+                Beide Ergebnisseiten als Bilder speichern
+            </button>
+        </div>
+    </div>
+
+        <div class="navigation">
+            <button id="prevButton" class="nav-button">Zurück</button>
+            <button id="nextButton" class="nav-button">Weiter</button>
+            <div class="progress-indicator" id="progressIndicator">
+                <!-- Wird dynamisch gefüllt -->
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="main.js"></script>
+
+</body>
+</html>
