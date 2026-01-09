@@ -1,14 +1,12 @@
 import { FRAGEN } from './fragen.js';
 import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE, LERNGELEGENHEITEN } from './config.js';
 
-/* To do für claude: 
-Fragen mit dem label objektiv löschen.
-3 Ebenen (subjektiv, objektiv, interesse) auf 2 reduzieren: einschätzung, interesse. subjektiv zu einschätzung umbenennen.
-Spidergraph entsprechend anpassen.
-Vierefeld: Bedarf entspricht MAX_WERT + 1 - Einschätzung.
-kompetenz: durchschnitt aller einschätzungen pro bereich. (Wie höher die Selbsteinschätzung ist, desto tiefer ist der Bedarf).
-Selbsteinschätzung von Interesse diskret farblich differenzieren.
-
+/* Version 2.99 - Änderungen:
+- Objektive Fragen entfernt (nur noch Einschätzung und Interesse)
+- 2 Ebenen: einschätzung, interesse
+- Spidergraph mit 2 Datenreihen
+- Viererfeld: Bedarf = MAX_WERT + 1 - Einschätzung
+- Farbliche Differenzierung der Fragen (Einschätzung blau, Interesse gelb)
 */
 
         // =========================================================
@@ -171,9 +169,12 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
             
             // HTML für alle Fragen des Bereichs erstellen
             bereichContainer.innerHTML = bereichFragen.map(frage => {
+                // CSS-Klasse basierend auf Ebene für farbliche Differenzierung
+                const ebeneClass = frage.ebene === 'interesse' ? 'question-interesse' : 'question-einschaetzung';
+
                 if (frage.typ === 'slider') {
                     return `
-                        <div class="question-card">
+                        <div class="question-card ${ebeneClass}">
                             <div class="question-title">${frage.text}</div>
                             <!---<div class="meta-info">
                                 Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
@@ -200,7 +201,7 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
                     `;
                 } else {
                     return `
-                        <div class="question-card">
+                        <div class="question-card ${ebeneClass}">
                             <div class="question-title">${frage.text}</div>
                             <!---<div class="meta-info">
                                 Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
@@ -228,12 +229,12 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
         // NEUE FUNKTION: Mapping von Antworten auf Analysebereiche
         function mapAntworten() {
             const analyseWerte = {};
-            
-            // Initialisiere alle Analysebereiche
+
+            // Initialisiere alle Analysebereiche (nur noch 2 Ebenen: einschätzung und interesse)
             ANALYSE_BEREICHE.forEach(bereich => {
-                analyseWerte[bereich] = { subjektiv: [], objektiv: [], interesse: [] };
+                analyseWerte[bereich] = { einschätzung: [], interesse: [] };
             });
-            
+
             // Verteile Antworten auf Analysebereiche basierend auf Handlungsaspekten
             Object.entries(antworten).forEach(([fragenId, wert]) => {
                 const frage = FRAGEN.find(f => f.id === parseInt(fragenId));
@@ -245,7 +246,7 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
                     });
                 }
             });
-            
+
             return analyseWerte;
         }
 
@@ -332,31 +333,30 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
         // Ergebniszusammenfassung anzeigen
         function renderResultsSummary() {
             const resultContainer = document.getElementById('resultsSummary');
-            
+
             // Verwende die gemappten Analysewerte
             const analyseWerte = mapAntworten();
-            
-            // Ergebnisse für jeden Analysebereich berechnen
+
+            // Ergebnisse für jeden Analysebereich berechnen (nur noch 2 Ebenen)
             const bereichErgebnisse = ANALYSE_BEREICHE.map(bereich => {
-                const ebenen = ['subjektiv', 'objektiv', 'interesse'];
-                
+                const ebenen = ['einschätzung', 'interesse'];
+
                 // Für jede Ebene Durchschnittswerte berechnen
                 const ebenenWerte = ebenen.map(ebene => {
                     const werte = analyseWerte[bereich][ebene];
                     if (werte.length === 0) return '0.0';
-                    
+
                     const summe = werte.reduce((sum, wert) => sum + wert, 0);
                     return (summe / werte.length).toFixed(1);
                 });
-                
+
                 // HTML für einen Bereich generieren
                 return `
                     <div style="margin-bottom: 10px; font-size: 0.8em;">
                         <strong>${bereich}</strong>
                         <ul style="margin-top: 5px;">
-                            <li>Subjektiv: ${ebenenWerte[0]}</li>
-                            <li>Objektiv: ${ebenenWerte[1]}</li>
-                            <li>Interesse: ${ebenenWerte[2]}</li>
+                            <li>Einschätzung: ${ebenenWerte[0]}</li>
+                            <li>Interesse: ${ebenenWerte[1]}</li>
                         </ul>
                     </div>
                 `;
@@ -481,10 +481,9 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
             const canvas = document.getElementById('radarCanvas');
             const ctx = setupCanvas(canvas);
 
-            // Aktuelle Farbeinstellungen auslesen
-            const subjektivColor = document.getElementById('subjektiv-color').value;
-            const objektivColor = document.getElementById('objektiv-color').value;
-            const interesseColor = document.getElementById('interesse-color').value;
+            // Aktuelle Farbeinstellungen auslesen (nur noch 2 Ebenen)
+            const subjektivColor = document.getElementById('subjektiv-color')?.value || '#2563eb';
+            const interesseColor = document.getElementById('interesse-color')?.value || '#dc2626';
             
             // Alpha-Werte für Füllfarben erstellen (20% Deckkraft)
             const getTransparentColor = (hexColor) => {
@@ -612,16 +611,14 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
                 const bereichData = analyseWerte[bereich];
                 return {
                     bereich,
-                    subjektiv: durchschnitt(bereichData.subjektiv),
-                    objektiv: durchschnitt(bereichData.objektiv),
+                    einschätzung: durchschnitt(bereichData.einschätzung),
                     interesse: durchschnitt(bereichData.interesse)
                 };
             });
 
-            // Definition der Ebenen mit ihren Eigenschaften und den ausgewählten Farben
+            // Definition der Ebenen mit ihren Eigenschaften und den ausgewählten Farben (nur noch 2 Ebenen)
             const ebenen = [
-                { name: 'subjektiv', farbe: [getTransparentColor(subjektivColor), subjektivColor], marker: 'circle' },
-                { name: 'objektiv', farbe: [getTransparentColor(objektivColor), objektivColor], marker: 'triangle' },
+                { name: 'einschätzung', farbe: [getTransparentColor(subjektivColor), subjektivColor], marker: 'circle' },
                 { name: 'interesse', farbe: [getTransparentColor(interesseColor), interesseColor], marker: 'square' }
             ];
 
@@ -664,32 +661,25 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
             });
             
             // Auch die Farben in der Legende aktualisieren
-            updateLegendColors(subjektivColor, objektivColor, interesseColor);
+            updateLegendColors(subjektivColor, interesseColor);
         }
         
-        // Funktion zum Aktualisieren der Farben in der Legende
-        function updateLegendColors(subjektivColor, objektivColor, interesseColor) {
+        // Funktion zum Aktualisieren der Farben in der Legende (nur noch 2 Ebenen)
+        function updateLegendColors(einschätzungColor, interesseColor) {
             // Finde alle SVG-Elemente in der Legende
             const legendItems = document.querySelectorAll('.legend-item svg');
-            
+
             // Aktualisiere die Farben der SVG-Elemente
-            if (legendItems.length >= 3) {
-                // Subjektiv (Kreis)
-                const subjektivSVG = legendItems[0].querySelector('circle');
-                if (subjektivSVG) {
-                    subjektivSVG.setAttribute('fill', '#fff');
-                    subjektivSVG.setAttribute('stroke', subjektivColor);
+            if (legendItems.length >= 2) {
+                // Einschätzung (Kreis)
+                const einschätzungSVG = legendItems[0].querySelector('circle');
+                if (einschätzungSVG) {
+                    einschätzungSVG.setAttribute('fill', '#fff');
+                    einschätzungSVG.setAttribute('stroke', einschätzungColor);
                 }
-                
-                // Objektiv (Dreieck)
-                const objektivSVG = legendItems[1].querySelector('path');
-                if (objektivSVG) {
-                    objektivSVG.setAttribute('fill', '#fff');
-                    objektivSVG.setAttribute('stroke', objektivColor);
-                }
-                
+
                 // Interesse (Rechteck)
-                const interesseSVG = legendItems[2].querySelector('rect');
+                const interesseSVG = legendItems[1].querySelector('rect');
                 if (interesseSVG) {
                     interesseSVG.setAttribute('fill', '#fff');
                     interesseSVG.setAttribute('stroke', interesseColor);
@@ -704,11 +694,12 @@ Selbsteinschätzung von Interesse diskret farblich differenzieren.
         
         // Funktion zum Zurücksetzen der Farben auf die Standardwerte
         function resetChartColors() {
-            // Standard-Farben setzen
-            document.getElementById('subjektiv-color').value = '#2563eb';
-            document.getElementById('objektiv-color').value = '#16a34a';
-            document.getElementById('interesse-color').value = '#dc2626';
-            
+            // Standard-Farben setzen (nur noch 2 Ebenen)
+            const subjektivInput = document.getElementById('subjektiv-color');
+            const interesseInput = document.getElementById('interesse-color');
+            if (subjektivInput) subjektivInput.value = '#2563eb';
+            if (interesseInput) interesseInput.value = '#dc2626';
+
             // Chart neu zeichnen
             drawRadar();
         }
@@ -975,33 +966,32 @@ document.getElementById('nextButton').addEventListener('click', () => {
         function calculatePriorityPositions() {
             const analyseWerte = mapAntworten();
             const priorityData = [];
-            
+
             ANALYSE_BEREICHE.forEach(bereich => {
                 const bereichData = analyseWerte[bereich];
-                
-                // Durchschnittswerte berechnen
-                const subjektiv = durchschnitt(bereichData.subjektiv);
-                const objektiv = durchschnitt(bereichData.objektiv);
+
+                // Durchschnittswerte berechnen (nur noch 2 Ebenen)
+                const einschätzung = durchschnitt(bereichData.einschätzung);
                 const interesse = durchschnitt(bereichData.interesse);
-                
-                // Weiterentwicklungsbedarf = umgekehrt zur Kompetenz
-                const kompetenz = (subjektiv + objektiv - 2) / 2;
-                const bedarf = MAX_WERT - kompetenz;
-                
+
+                // Weiterentwicklungsbedarf = MAX_WERT + 1 - Einschätzung
+                // Je höher die Selbsteinschätzung, desto tiefer der Bedarf
+                const bedarf = MAX_WERT + 1 - einschätzung;
+
                 // Position im Viererfeld bestimmen
                 const position = {
                     bereich: bereich,
-                    x: interesse, // Interesse horizontal (0-3)
-                    y: bedarf,    // Bedarf vertikal (0-3)
+                    x: interesse,      // Interesse horizontal (0-3)
+                    y: bedarf,         // Bedarf vertikal (1-4)
                     quadrant: getQuadrant(interesse, bedarf),
-                    kompetenz: kompetenz,
+                    einschätzung: einschätzung,
                     interesse: interesse,
                     bedarf: bedarf
                 };
-                
+
                 priorityData.push(position);
             });
-            
+
             return priorityData;
         }
 
@@ -1512,10 +1502,9 @@ async function exportBothPages() {
 */
 
 const TEST_ANTWORTEN = {
-    // Zahl und Variable - gemischte Kompetenzen
+    // Zahl und Variable - gemischte Kompetenzen (objektive Fragen 103, 115 entfernt)
     101: 2,  // Grundrechenarten - eher unsicher
     102: 2,  // Stellenwertsystem - eher sicher
-    103: 2,  // Multiplikation negativer Zahlen - korrekt
     104: 2,  // LP21 Kompetenz
     105: 2,  // Zählen und ordnen - sehr kompetent
     106: 2,  // Grundoperationen - wenig kompetent
@@ -1527,14 +1516,12 @@ const TEST_ANTWORTEN = {
     112: 2,  // Anzahlen veranschaulichen
     113: 2,  // Zahlenmuster - gut
     114: 2,  // Unterrichtsplanung Arithmetik - mittlere Kompetenz
-    115: 2,  // Gleichung ax+b=0 - falsch beantwortet
-    116: 1,  // Interesse Operieren und Benennen 
-    117: 1,  // Interesse Erforschen und Argumentieren 
+    116: 1,  // Interesse Operieren und Benennen
+    117: 1,  // Interesse Erforschen und Argumentieren
     118: 1,  // Interesse Mathematisieren und Darstellen
-    
-    // Form und Raum - stärkerer Bereich
+
+    // Form und Raum - stärkerer Bereich (objektive Frage 202 entfernt)
     201: 2,  // Geometrische Zusammenhänge visualisieren - sehr gut
-    202: 2,  // Oktaeder Ecken - korrekt
     203: 1,  // Interesse räumliches Vorstellungsvermögen - sehr
     204: 2,  // Geometrische Eigenschaften - sehr gut
     205: 2,  // LP21 Begriffe und Symbole - sehr kompetent
@@ -1546,28 +1533,26 @@ const TEST_ANTWORTEN = {
     211: 2,  // Figuren zeichnen - sehr kompetent
     212: 2,  // Kopfgeometrie - kompetent
     213: 2,  // Koordinatensystem - kompetent
-    214: 1,  // Interesse Operieren und Benennen -
+    214: 1,  // Interesse Operieren und Benennen
     215: 1,  // Interesse Erforschen und Argumentieren - sehr interessiert
     216: 1,  // Interesse Mathematisieren und Darstellen - sehr interessiert
-    
-    // Größen und Funktionen - mittlerer Bereich mit Schwächen
+
+    // Grössen und Funktionen - mittlerer Bereich (objektive Frage 302 entfernt)
     301: 3,  // Proportionale Zusammenhänge - sicher
-    302: 3,  // Auto Geschwindigkeit - korrekt
     303: 2,  // Interesse funktionale Zusammenhänge - wenig
     304: 3,  // Alltagssituationen modellieren - gut
     305: 3,  // LP21 Begriffe - kompetent
-    306: 3,  // Größen schätzen - wenig kompetent
+    306: 3,  // Grössen schätzen - wenig kompetent
     307: 3,  // Funktionale Zusammenhänge - wenig kompetent
-    308: 3,  // Größenbeziehungen erforschen - kompetent
+    308: 3,  // Grössenbeziehungen erforschen - kompetent
     309: 3,  // Sachsituationen mathematisieren - kompetent
     310: 1,  // Terme konkretisieren - wenig kompetent
     311: 2,  // Interesse Operieren und Benennen - wenig
     312: 2,  // Interesse Erforschen und Argumentieren - wenig
     313: 2,  // Interesse Mathematisieren und Darstellen - mittel
-    
-    // Daten und Zufall - schwächerer Bereich
+
+    // Daten und Zufall - schwächerer Bereich (objektive Frage 402 entfernt)
     401: 2,  // Diagramme interpretieren - eher wenig kompetent
-    402: 2,  // Münzwurf Wahrscheinlichkeit - korrekt
     403: 1,  // Interesse Statistik - keine Antwort/wenig
     404: 2,  // Statistiken hinterfragen - wenig
     405: 2,  // LP21 Begriffe - wenig kompetent
@@ -1576,24 +1561,19 @@ const TEST_ANTWORTEN = {
     408: 1,  // Interesse Operieren und Benennen - keine Antwort/wenig
     409: 1,  // Interesse Erforschen und Argumentieren - keine Antwort/wenig
     410: 1,  // Interesse Mathematisieren und Darstellen - keine Antwort/wenig
-    
-    // Unterrichts- und Lernplanung
-    
-    // Planung - guter Bereich
+
+    // Planung - guter Bereich (objektive Frage 502 entfernt)
     501: 3,  // Unterrichtsplanung - sicher
-    502: 3,  // Lernwirksamer Unterricht - korrekt
     503: 1,  // Interesse innovative Methoden - sehr
     504: 3,  // Anpassung an Lernvoraussetzungen - gut
-    
-    // Beurteilung - mittlerer Bereich
+
+    // Beurteilung - mittlerer Bereich (objektive Frage 62 entfernt)
     61: 2,   // Beurteilung math. Leistungen - kompetent
-    62: 3,   // Formative Beurteilung - korrekt
     63: 2,   // Interesse alternative Beurteilung - mittel
     64: 2,   // Konstruktives Feedback - gut
-    
-    // Lernbegleitung und Förderung - Entwicklungsbedarf
+
+    // Lernbegleitung und Förderung - Entwicklungsbedarf (objektive Frage 72 entfernt)
     71: 1,   // Individuelle Förderung - eher unsicher
-    72: 1,   // Fehleranalyse - korrekt
     73: 3,   // Interesse Rechenschwäche - sehr
     74: 1    // Begabungen fördern - keine Antwort/wenig
 };
