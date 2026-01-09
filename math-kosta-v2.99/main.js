@@ -1,6 +1,16 @@
 import { FRAGEN } from './fragen.js';
 import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE, LERNGELEGENHEITEN } from './config.js';
 
+/* To do für claude: 
+Fragen mit dem label objektiv löschen.
+3 Ebenen (subjektiv, objektiv, interesse) auf 2 reduzieren: einschätzung, interesse. subjektiv zu einschätzung umbenennen.
+Spidergraph entsprechend anpassen.
+Vierefeld: Bedarf entspricht MAX_WERT + 1 - Einschätzung.
+kompetenz: durchschnitt aller einschätzungen pro bereich. (Wie höher die Selbsteinschätzung ist, desto tiefer ist der Bedarf).
+Selbsteinschätzung von Interesse diskret farblich differenzieren.
+
+*/
+
         // =========================================================
         // FRAGENKATALOG - BEGINN
         // =========================================================

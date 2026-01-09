@@ -5,9 +5,9 @@ const FRAGEN = [
     // ===== ZAHL UND VARIABLE ===== id 1xx
     {
         id: 101,
-        text: "Wie sicher fühlen Sie sich beim Erklären und Formulieren von Förderhinweisen zu den Grundrechenarten?",
+        text: "Wie sicher fühlen Sie sich inhaltlich beim Erklären und Formulieren von Förderhinweisen zu den Grundrechenarten?",
         bereich: "Zahl und Variable",
-        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen", "Lernbegleitung und Förderung"],
         ebene: "subjektiv",
         typ: "slider",
         antworten: [
@@ -19,9 +19,9 @@ const FRAGEN = [
     },
     {
         id: 102,
-        text: "Wie sicher fühlen Sie sich beim Erklären und Formulieren von Förderhinweisen zum Stellenwertsystem?",
+        text: "Wie sicher fühlen Sie sich inhaltlich beim Erklären und Formulieren von Förderhinweisen zum Stellenwertsystem?",
         bereich: "Zahl und Variable",
-        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen", "Lernbegleitung und Förderung"],
         ebene: "subjektiv",
         typ: "slider",
         antworten: [
@@ -47,7 +47,7 @@ const FRAGEN = [
     },
     {
         id: 104,
-        text: "Schätzen Sie im Folgenden <b>Ihre fachliche Kompetenz</br> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden arithmetische Begriffe und Symbole. Sie lesen und schreiben Zahlen.»",
+        text: "Schätzen Sie im Folgenden <b>Ihre fachliche Kompetenz</br> in Bezug auf die genannten LP21 Kompetenzen ein: «Arithmetische Begriffe und Symbole verstehen und verwenden. Zahlen lesen und schreiben.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -61,7 +61,7 @@ const FRAGEN = [
     },
         {
         id: 105,
-        text: "«Die Schülerinnen und Schüler können flexibel zählen, Zahlen nach der Grösse ordnen und Ergebnisse überschlagen.»",
+        text: "«Flexibel zählen, Zahlen nach der Grösse ordnen und Ergebnisse überschlagen.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -75,7 +75,7 @@ const FRAGEN = [
     },
     {
         id: 106,
-        text: "«Die Schülerinnen und Schüler können addieren, subtrahieren, multiplizieren, dividieren und potenzieren.»",
+        text: "«Addieren, subtrahieren, multiplizieren, dividieren und potenzieren.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -89,7 +89,7 @@ const FRAGEN = [
     },
     {
         id: 107,
-        text: "«Die Schülerinnen und Schüler können Terme vergleichen und umformen, Gleichungen lösen, Gesetze und Regeln anwenden.»",
+        text: "«Terme vergleichen und umformen, Gleichungen lösen, Gesetze und Regeln anwenden.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -103,7 +103,7 @@ const FRAGEN = [
     },
         {
         id: 108,
-        text: "«Die Schülerinnen und Schüler können Zahl- und Operationsbeziehungen sowie arithmetische Muster erforschen und Erkenntnisse austauschen.»",
+        text: "«Zahl- und Operationsbeziehungen sowie arithmetische Muster erforschen und Erkenntnisse austauschen.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
         ebene: "subjektiv",
@@ -117,7 +117,7 @@ const FRAGEN = [
     },
     {
         id: 109,
-        text: "«Die Schülerinnen und Schüler können Aussagen, Vermutungen und Ergebnisse zu Zahlen und Variablen erläutern, überprüfen, begründen.»",
+        text: "«Aussagen, Vermutungen und Ergebnisse zu Zahlen und Variablen erläutern, überprüfen, begründen.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
         ebene: "subjektiv",
@@ -131,7 +131,7 @@ const FRAGEN = [
     },
     {
         id: 110,
-        text: "«Die Schülerinnen und Schüler können beim Erforschen arithmetischer Muster Hilfsmittel nutzen.»",
+        text: "«Beim Erforschen arithmetischer Muster Hilfsmittel nutzen.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
         ebene: "subjektiv",
@@ -145,7 +145,7 @@ const FRAGEN = [
     },
     {
         id: 111,
-        text: "«Die Schülerinnen und Schüler können Rechenwege darstellen, beschreiben, austauschen und nachvollziehen.»",
+        text: "«Rechenwege darstellen, beschreiben, austauschen und nachvollziehen.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -159,7 +159,7 @@ const FRAGEN = [
     },
     {
         id: 112,
-        text: "«Die Schülerinnen und Schüler können Anzahlen, Zahlenfolgen und Terme veranschaulichen, beschreiben und verallgemeinern.»",
+        text: "«Anzahlen, Zahlenfolgen und Terme veranschaulichen, beschreiben und verallgemeinern.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -173,9 +173,9 @@ const FRAGEN = [
     },
     {
         id: 113,
-        text: "Können Sie Schüler*innen beim Erkunden von Zahlenmustern helfen?",
+        text: "Können Sie Schüler*innen beim Erkunden von Zahlenmustern methodisch unterstützen?",
         bereich: "Zahl und Variable",
-        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
+        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren", "Lernbegleitung und Förderung"],
         ebene: "subjektiv",
         typ: "slider",
         antworten: [
@@ -327,7 +327,7 @@ const FRAGEN = [
     },
     {
         id: 206,
-        text: "«Die Schülerinnen und Schüler können Figuren und Körper abbilden, zerlegen und zusammensetzen.»",
+        text: "«Figuren und Körper abbilden, zerlegen und zusammensetzen.»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -341,7 +341,7 @@ const FRAGEN = [
     },
         {
         id: 207,
-        text: "«Die Schülerinnen und Schüler können Längen, Flächen und Volumen bestimmen und berechnen.»",
+        text: "«Längen, Flächen und Volumen bestimmen und berechnen.»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -355,7 +355,7 @@ const FRAGEN = [
     },
             {
         id: 208,
-        text: "«Die Schülerinnen und Schüler können geometrische Beziehungen, insbesondere zwischen Längen, Flächen und Volumen, erforschen, Vermutungen formulieren und Erkenntnisse austauschen.»",
+        text: "«Geometrische Beziehungen, insbesondere zwischen Längen, Flächen und Volumen, erforschen, Vermutungen formulieren und Erkenntnisse austauschen.»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
         ebene: "subjektiv",
@@ -369,7 +369,7 @@ const FRAGEN = [
     },
     {
         id: 209,
-        text: "«Die Schülerinnen und Schüler können Aussagen und Formeln zu geometrischen Beziehungen überprüfen, mit Beispielen belegen und begründen.»",
+        text: "«Aussagen und Formeln zu geometrischen Beziehungen überprüfen, mit Beispielen belegen und begründen.»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
         ebene: "subjektiv",
@@ -383,7 +383,7 @@ const FRAGEN = [
     },
     {
         id: 210,
-        text: "«Die Schülerinnen und Schüler können Körper und räumliche Beziehungen darstellen.»",
+        text: "«Körper und räumliche Beziehungen darstellen.»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
         ebene: "subjektiv",
@@ -397,7 +397,7 @@ const FRAGEN = [
     },
     {
         id: 211,
-        text: "«Die Schülerinnen und Schüler können Figuren falten, skizzieren, zeichnen und konstruieren sowie Darstellungen zur ebenen Geometrie austauschen und überprüfen.»",
+        text: "«Figuren falten, skizzieren, zeichnen und konstruieren sowie Darstellungen zur ebenen Geometrie austauschen und überprüfen.»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
         ebene: "subjektiv",
@@ -411,7 +411,7 @@ const FRAGEN = [
     },
     {
         id: 212,
-        text: "«Die Schülerinnen und Schüler können sich Figuren und Körper in verschiedenen Lagen vorstellen, Veränderungen darstellen und beschreiben (Kopfgeometrie).»",
+        text: "«Sich Figuren und Körper in verschiedenen Lagen vorstellen, Veränderungen darstellen und beschreiben (Kopfgeometrie).»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
         ebene: "subjektiv",
@@ -425,7 +425,7 @@ const FRAGEN = [
     },
     {
         id: 213,
-        text: "«Die Schülerinnen und Schüler können in einem Koordinatensystem die Koordinaten von Figuren und Körpern bestimmen bzw. Figuren und Körper aufgrund ihrer Koordinaten darstellen sowie Pläne lesen und zeichnen.»",
+        text: "«An einem Koordinatensystem die Koordinaten von Figuren und Körpern bestimmen bzw. Figuren und Körper aufgrund ihrer Koordinaten darstellen sowie Pläne lesen und zeichnen.»",
         bereich: "Form und Raum",
         handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
         ebene: "subjektiv",
@@ -553,7 +553,7 @@ const FRAGEN = [
     },
     {
         id: 306,
-        text: "«Die Schülerinnen und Schüler können Grössen schätzen, messen, umwandeln, runden und mit ihnen rechnen.»",
+        text: "«Grössen schätzen, messen, umwandeln, runden und mit ihnen rechnen.»",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -567,7 +567,7 @@ const FRAGEN = [
     },
         {
         id: 307,
-        text: "«Die Schülerinnen und Schüler können funktionale Zusammenhänge beschreiben und Funktionswerte bestimmen.»",
+        text: "«Funktionale Zusammenhänge beschreiben und Funktionswerte bestimmen.»",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
         ebene: "subjektiv",
@@ -581,7 +581,7 @@ const FRAGEN = [
     },
     {
         id: 308,
-        text: "«Die Schülerinnen und Schüler können zu Grössenbeziehungen und funktionalen Zusammenhängen Fragen formulieren, diese erforschen sowie Ergebnisse überprüfen und begründen.»",
+        text: "«Zu Grössenbeziehungen und funktionalen Zusammenhängen Fragen formulieren, diese erforschen sowie Ergebnisse überprüfen und begründen.»",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Erforschen und Argumentieren"],
         ebene: "subjektiv",
@@ -595,7 +595,7 @@ const FRAGEN = [
     },
     {
         id: 309,
-        text: "«Die Schülerinnen und Schüler können Sachsituationen mathematisieren, darstellen, berechnen sowie Ergebnisse interpretieren und überprüfen.»",
+        text: "«Sachsituationen mathematisieren, darstellen, berechnen sowie Ergebnisse interpretieren und überprüfen.»",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
         ebene: "subjektiv",
@@ -609,7 +609,7 @@ const FRAGEN = [
     },
     {
         id: 310,
-        text: "«Die Schülerinnen und Schüler können Terme, Formeln, Gleichungen und Tabellen mit Sachsituationen konkretisieren.»",
+        text: "«Terme, Formeln, Gleichungen und Tabellen mit Sachsituationen konkretisieren.»",
         bereich: "Grössen und Funktionen",
         handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
         ebene: "subjektiv",
@@ -737,7 +737,7 @@ const FRAGEN = [
     },
     {
         id: 406,
-        text: "«Die Schülerinnen und Schüler können Sachsituationen zur Statistik, Kombinatorik und Wahrscheinlichkeit erforschen, Vermutungen formulieren und überprüfen.»",
+        text: "«Sachsituationen zur Statistik, Kombinatorik und Wahrscheinlichkeit erforschen, Vermutungen formulieren und überprüfen.»",
         bereich: "Daten und Zufall",
         handlungsaspekte: ["Daten und Zufall", "Erforschen und Argumentieren"],
         ebene: "subjektiv",
@@ -751,7 +751,7 @@ const FRAGEN = [
     },
     {
         id: 407,
-        text: "«Die Schülerinnen und Schüler können Daten zu Statistik, Kombinatorik und Wahrscheinlichkeit erheben, ordnen, darstellen, auswerten und interpretieren.»",
+        text: "«Daten zu Statistik, Kombinatorik und Wahrscheinlichkeit erheben, ordnen, darstellen, auswerten und interpretieren.»",
         bereich: "Daten und Zufall",
         handlungsaspekte: ["Daten und Zufall", "Mathematisieren und Darstellen"],
         ebene: "subjektiv",

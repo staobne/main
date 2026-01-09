@@ -605,9 +605,69 @@
         .quadrant-info {
             grid-template-columns: 1fr;
         }
-        
+
         #priorityCanvas {
             width: 100%;
             height: auto;
         }
+    }
+
+    /* ========================================= */
+    /* ILIAS-Hinweise und Standortbestimmung */
+    /* ========================================= */
+
+    .ilias-info-card {
+        background-color: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 20px;
+        margin: 15px 0;
+    }
+
+    .ilias-info-card h3 {
+        margin-top: 0;
+        color: #92400e;
+        font-size: 1.2em;
+    }
+
+    .ilias-link-box {
+        background-color: #ffffff;
+        border: 2px solid #f59e0b;
+        border-radius: 6px;
+        padding: 15px;
+        margin: 15px 0;
+    }
+
+    .ilias-link-box a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    .ilias-link-box a:hover {
+        text-decoration: underline;
+    }
+
+    .ilias-reminder {
+        background-color: #eff6ff;
+        border-left: 4px solid #3b82f6;
+        padding: 12px 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+        font-size: 0.95em;
+    }
+
+    .ilias-reminder strong {
+        color: #1e40af;
+    }
+
+    .ilias-reminder a {
+        color: #2563eb;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .ilias-reminder a:hover {
+        text-decoration: underline;
     }
