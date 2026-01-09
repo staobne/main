@@ -1,50 +1,44 @@
-Setze folgenden Plan im Ordner v2.99 um:
-arum nur 2 Dimensionen vollkommen ausreichend sind:
+Für mich wäre denkbar, dass die Linien von den Punkten weggehen, so dass sich sich auf der Fläche so sinnvoll verteilen, dass die Texte lesbar bleiben. Bei 3 und mehr Punkten mit gleichem x Wert und wenig Abstand muss die Linie je nach dem zuerst horizontal weg und dann erst knicken. Ein anderer Weg wäre die Nummerierung der Punkte (und sie etwas grösser machen) und eine Legende, beginnend bei der hächsten Priorität. Aber lass mich zuerst deine paar Ideen hören.
+Ich sehe das Problem - die Labels überlappen sich stark, besonders im Bereich "2. Priorität / Ohne Priorität". Hier sind meine Lösungsansätze:
 
-Zweck der Analyse:
+Lösungsansätze für Label-Überlappung
+1. Leader-Linien mit intelligenter Verteilung
+Wie Sie vorgeschlagen haben - Labels werden vom Punkt weg positioniert mit einer Linie (Leader Line). Die Herausforderung: Ein gleichzeitiger Kollisionsalgorithmus, der alle Labels simultan optimiert (nicht sequenziell).
 
-Nicht summative Bewertung, sondern Selbstreflexion
-Grundlage für individuelle Entwicklungsplanung
-Bewusstmachung von Stärken und Entwicklungsfeldern
+Umsetzung:
 
+Berechne Bounding-Boxes aller Labels gleichzeitig
+Verwende einen Force-Directed-Algorithmus (ähnlich wie bei Graphen), der Labels voneinander "abstösst"
+Zeichne dann die Linien von Label zu Punkt
+2. Nummerierte Punkte + Legende
+Simpel und immer lesbar:
 
-Validität bei Masterstudierenden:
+Grössere Punkte mit Zahlen (1-10)
+Legende sortiert nach Priorität (1. Priorität zuerst)
+Farbcodierung der Zahlen nach Quadrant
+Vorteil: Garantiert keine Überlappung
+Nachteil: Benutzer muss hin- und herschauen
 
-Haben bereits Bachelor + Berufserfahrung
-Können ihre Kompetenzen meist realistisch einschätzen
-Selbsteinschätzung ist oft prädiktiver als einzelne Testfragen
+3. Interaktive Lösung (Tooltip/Hover)
+Kleine Punkte ohne Labels
+Bei Mouse-Hover erscheint der Name
+Für Export: Automatisch zur Legende wechseln
+4. Radiale Anordnung der Labels
+Labels werden um den Punkt herum in verschiedene Richtungen platziert:
 
+Oben, unten, links, rechts, diagonal
+Jedes Label bekommt eine Richtung basierend auf freiem Platz
+5. Cluster-Gruppierung
+Eng beieinanderliegende Punkte werden als Gruppe behandelt:
 
-Für das Viererfeld perfekt:
+Ein gemeinsamer Ankerpunkt
+Labels werden gestapelt (vertikal untereinander)
+Eine gemeinsame Leader-Linie zum Cluster
+Meine Empfehlung: Kombination aus Option 2 (Nummerierung) als primäre Lösung - sie ist robust und funktioniert immer, auch beim Export als PNG.
 
-   X-Achse: Interesse (0-3)
-   Y-Achse: Entwicklungsbedarf = MAX_WERT - Selbsteinschätzung
+Welchen Ansatz bevorzugen Sie?
 
-Radar-Chart:
+Mir würde Option 3 kombiniert mit Option 2 (damit der Export funktioniert) passen.
+Gute Wahl - Hover für Interaktivität im Browser, Nummern + Legende für den Export. Ich aktualisiere den Plan.
 
-2 Ebenen (Selbsteinschätzung + Interesse) sind übersichtlicher
-Fokus auf die wirklich relevanten Dimensionen
-Keine "Scheinobjektivität"
-
-Was geändert werden müsste:
-
-fragen.js:
-
-ebene nur noch: "selbsteinschaetzung" oder "interesse"
-MC-Fragen streichen oder zu Selbsteinschätzung umformulieren
-
-
-main.js:
-
-Radar-Chart: 2 statt 3 Ebenen
-Mapping-Funktion anpassen
-Viererfeld: Bedarf = 3 - Selbsteinschätzung
-
-
-Labeling anpassen:
-
-"Selbsteinschätzung" statt "Subjektiv"
-Keine "Objektiv"-Ebene mehr
-
-Verweise für die Selbsteinschätzung den Hinweis auf die Standortbestimmung aus dem Bachelor. Hebe Selbsteinschätzung und Interesse dezent voneinander ab.
-Ergänze die didaktischen Bereiche um ein zwei weitere sinnvolle Selbsteinschätzungsfragen.
+Edit streamed-singing-pine.md

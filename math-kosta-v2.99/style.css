@@ -682,3 +682,124 @@
     .ilias-reminder a:hover {
         text-decoration: underline;
     }
+
+    /* ========================================= */
+    /* Tooltip für Prioritätsmatrix (Hover) */
+    /* ========================================= */
+
+    .priority-tooltip {
+        display: none;
+        position: fixed;
+        background-color: #1f2937;
+        color: white;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 14px;
+        z-index: 1000;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        pointer-events: none;
+        max-width: 250px;
+        line-height: 1.5;
+    }
+
+    .priority-tooltip strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 15px;
+        border-bottom: 1px solid #4b5563;
+        padding-bottom: 6px;
+    }
+
+    .priority-tooltip .tooltip-detail {
+        color: #d1d5db;
+        font-size: 13px;
+    }
+
+    /* ========================================= */
+    /* Nummerierte Punkte Legende */
+    /* ========================================= */
+
+    .priority-points-legend {
+        width: 100%;
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 15px;
+        background-color: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .points-legend-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+
+    .legend-group {
+        padding: 12px;
+        border-radius: 6px;
+    }
+
+    .legend-group.priority-1 {
+        background-color: #fef2f2;
+        border-left: 4px solid #dc2626;
+    }
+
+    .legend-group.priority-2 {
+        background-color: #fffbeb;
+        border-left: 4px solid #d97706;
+    }
+
+    .legend-group.priority-3 {
+        background-color: #eff6ff;
+        border-left: 4px solid #2563eb;
+    }
+
+    .legend-group.priority-4 {
+        background-color: #f9fafb;
+        border-left: 4px solid #6b7280;
+    }
+
+    .legend-group h5 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        font-weight: bold;
+        color: #374151;
+    }
+
+    .legend-group ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .legend-group li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 0;
+        font-size: 13px;
+    }
+
+    .legend-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .legend-text {
+        color: #374151;
+    }
+
+    @media (max-width: 600px) {
+        .points-legend-grid {
+            grid-template-columns: 1fr;
+        }
+    }

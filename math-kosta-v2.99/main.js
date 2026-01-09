@@ -1,7 +1,16 @@
 import { FRAGEN } from './fragen.js';
 import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE, LERNGELEGENHEITEN } from './config.js';
 
-/* Version 2.99 - Änderungen:
+/* 
+1) Werte bei Labels bringen nix. => Prädikat?
+2) Die Priorität sollte sich zuerst am BEdarf und dann am Interesse orientieren. Die Nummerireung sollte das widerspiegeln.
+3) Landing Page ist alles andere als schön, ev. zu rund, zu blau und zu gelb. Anderes Farbschema?
+4) Position der Punkte stimmt noch nicht, auch im grauen Feld, obwohl gelb - oder umegekhrt.
+5) Spidergraph: Klar machen, dass Einschätzung je höher, desto besser.
+6) Ev. Viererfeld und Graph umdrehen.
+7) Ev. Legende zu Viererfeld mit Legende zu den Punkten vereinen.
+
+Version 2.99 - Änderungen:
 - Objektive Fragen entfernt (nur noch Einschätzung und Interesse)
 - 2 Ebenen: einschätzung, interesse
 - Spidergraph mit 2 Datenreihen
@@ -899,6 +908,7 @@ function initializePriorityPage() {
     setTimeout(() => {
         try {
             drawPriorityMatrix();
+            initPriorityCanvasHover(); // Hover-Funktionalität aktivieren
         } catch (e) {
             console.error("Fehler beim Zeichnen des Viererfeld-Charts:", e);
         }
@@ -1098,12 +1108,15 @@ document.getElementById('nextButton').addEventListener('click', () => {
             ctx.fillRect(margin, margin + halfHeight, halfWidth, halfHeight);
         }
 
-// Datenpunkte zeichnen mit intelligenter Label-Positionierung
+// Globale Variable für Punkt-Positionen (für Hover-Detection)
+let priorityPointsData = [];
+
+// Datenpunkte zeichnen mit nummerierten Kreisen
 function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
     const padding = 0.15;
     const usableWidth = chartWidth * (1 - 2 * padding);
     const usableHeight = chartHeight * (1 - 2 * padding);
-    
+
     // Farben je nach Quadrant
     const colors = {
         'priority-1': '#dc2626',
@@ -1111,124 +1124,154 @@ function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
         'priority-3': '#2563eb',
         'priority-4': '#6b7280'
     };
-    
-    // Berechne Positionen für alle Punkte
-    const points = priorityData.map(point => {
-        const normalizedX = (point.x - 1) / 2;  // Berücksichtigt, dass Interesse von 1 bis 3 geht
-        const normalizedY = (point.y - 1) / 2;  // dito
+
+    // Sortiere nach Priorität für Nummerierung (1. Priorität zuerst)
+    const sortedData = [...priorityData].sort((a, b) => {
+        const priorityOrder = { 'priority-1': 1, 'priority-2': 2, 'priority-3': 3, 'priority-4': 4 };
+        if (priorityOrder[a.quadrant] !== priorityOrder[b.quadrant]) {
+            return priorityOrder[a.quadrant] - priorityOrder[b.quadrant];
+        }
+        return a.bereich.localeCompare(b.bereich);
+    });
+
+    // Berechne Positionen für alle Punkte mit Nummerierung
+    const points = sortedData.map((point, index) => {
+        const normalizedX = (point.x - 1) / 2;
+        const normalizedY = (point.y - 1) / 2;
         const x = margin + chartWidth * padding + normalizedX * usableWidth;
         const y = margin + chartHeight * padding + (1 - normalizedY) * usableHeight;
-        
+
         return {
             x: x,
             y: y,
             bereich: point.bereich,
             quadrant: point.quadrant,
-            lines: splitBereichLabel(point.bereich)
+            nummer: index + 1,
+            interesse: point.interesse,
+            bedarf: point.bedarf,
+            einschätzung: point.einschätzung
         };
     });
-    
-    // Berechne Label-Positionen mit Kollisionsvermeidung
-    const labels = calculateLabelPositions(points, ctx);
-    
-    // Zeichne Verbindungslinien zu verschobenen Labels
-    labels.forEach((label, index) => {
-        const point = points[index];
-        
-        // Wenn Label verschoben wurde, zeichne dünne Verbindungslinie
-        const labelCenterX = label.x;
-        const labelCenterY = label.y;
-        const distance = Math.sqrt(Math.pow(labelCenterX - point.x, 2) + Math.pow(labelCenterY - point.y, 2));
-        
-        if (distance > 30) { // Nur bei größerer Verschiebung
-            ctx.strokeStyle = colors[point.quadrant];
-            ctx.lineWidth = 2;
-            ctx.setLineDash([2, 2]);
-            ctx.beginPath();
-            ctx.moveTo(point.x, point.y);
-            ctx.lineTo(labelCenterX, labelCenterY);
-            ctx.stroke();
-            ctx.setLineDash([]);
-        }
-    });
-    
-    // Zeichne Punkte
+
+    // Speichere für Hover-Detection
+    priorityPointsData = points;
+
+    // Zeichne nummerierte Punkte (grösserer Radius)
+    const pointRadius = 22;
+
     points.forEach(point => {
+        // Farbiger Kreis
         ctx.fillStyle = colors[point.quadrant];
-        ctx.strokeStyle = colors[point.quadrant];
-        ctx.lineWidth = 2;
-        
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+
         ctx.beginPath();
-        ctx.arc(point.x, point.y, 8, 0, 2 * Math.PI);
+        ctx.arc(point.x, point.y, pointRadius, 0, 2 * Math.PI);
         ctx.fill();
         ctx.stroke();
-    });
-    
-    // Zeichne Labels
-    ctx.font = '24px Roboto, sans-serif';
-    labels.forEach((label, index) => {
-        const point = points[index];
-        
-        ctx.fillStyle = '#000';
+
+        // Nummer im Kreis (weisse Schrift)
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px Roboto, sans-serif';
         ctx.textAlign = 'center';
-        
-        // Erste Zeile
-        ctx.fillText(point.lines[0], label.x, label.y - 5);
-        // Zweite Zeile
-        if (point.lines[1]) {
-            ctx.fillText(point.lines[1], label.x, label.y + 20);
-        }
+        ctx.textBaseline = 'middle';
+        ctx.fillText(point.nummer.toString(), point.x, point.y);
     });
-    
-    ctx.textAlign = 'left'; // Reset
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    // Legende aktualisieren
+    updatePriorityLegend(points, colors);
 }
 
-// Hilfsfunktion: Berechne Label-Positionen mit Kollisionsvermeidung
-function calculateLabelPositions(points, ctx) {
-    ctx.font = '24px Roboto, sans-serif';
-    
-    const labels = [];
-    const minDistance = 20; // Minimaler Abstand zwischen Labels
-    
-    points.forEach((point, index) => {
-        // Bevorzugte Positionen (in Reihenfolge): oben, unten, rechts, links. Mit den Zahlenwerten spielen, bis gut.
-        const positions = [
-            { x: point.x, y: point.y - 50, priority: 1 },      // oben
-            { x: point.x, y: point.y + 50, priority: 2 },      // unten
-            { x: point.x + 100, y: point.y, priority: 3 },      // rechts
-            { x: point.x - 100, y: point.y, priority: 4 },      // links
+// Legende für Prioritätsmatrix aktualisieren
+function updatePriorityLegend(points, colors) {
+    const legendContainer = document.getElementById('priority-points-legend');
+    if (!legendContainer) return;
 
-        ];
-        
-        // Finde beste Position ohne Kollision
-        let bestPosition = positions[0];
-        
-        for (const pos of positions) {
-            let hasCollision = false;
-            
-            // Prüfe Kollision mit bereits platzierten Labels
-            for (const existingLabel of labels) {
-                const distance = Math.sqrt(
-                    Math.pow(pos.x - existingLabel.x, 2) + 
-                    Math.pow(pos.y - existingLabel.y, 2)
-                );
-                
-                if (distance < minDistance) {
-                    hasCollision = true;
-                    break;
-                }
-            }
-            
-            if (!hasCollision) {
-                bestPosition = pos;
+    // Gruppiere nach Quadrant
+    const groups = {
+        'priority-1': { label: '1. Priorität', items: [] },
+        'priority-2': { label: '2. Priorität', items: [] },
+        'priority-3': { label: '3. Priorität', items: [] },
+        'priority-4': { label: 'Ohne Priorität', items: [] }
+    };
+
+    points.forEach(point => {
+        groups[point.quadrant].items.push(point);
+    });
+
+    // HTML generieren
+    let html = '<div class="points-legend-grid">';
+
+    Object.entries(groups).forEach(([quadrant, group]) => {
+        if (group.items.length > 0) {
+            html += `<div class="legend-group ${quadrant}">`;
+            html += `<h5>${group.label}</h5>`;
+            html += '<ul>';
+            group.items.forEach(item => {
+                html += `<li>
+                    <span class="legend-number" style="background-color: ${colors[quadrant]}">${item.nummer}</span>
+                    <span class="legend-text">${item.bereich}</span>
+                </li>`;
+            });
+            html += '</ul></div>';
+        }
+    });
+
+    html += '</div>';
+    legendContainer.innerHTML = html;
+}
+
+// Hover-Funktionalität für Prioritätsmatrix
+function initPriorityCanvasHover() {
+    const canvas = document.getElementById('priorityCanvas');
+    const tooltip = document.getElementById('priority-tooltip');
+    if (!canvas || !tooltip) return;
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+
+        const pointRadius = 22;
+        let hoveredPoint = null;
+
+        // Finde Punkt unter dem Cursor
+        for (const point of priorityPointsData) {
+            const distance = Math.sqrt(
+                Math.pow(mouseX - point.x, 2) + Math.pow(mouseY - point.y, 2)
+            );
+            if (distance <= pointRadius * 1.5) {
+                hoveredPoint = point;
                 break;
             }
         }
-        
-        labels.push(bestPosition);
+
+        if (hoveredPoint) {
+            tooltip.innerHTML = `
+                <strong>${hoveredPoint.bereich}</strong><br>
+                <span class="tooltip-detail">Einschätzung: ${hoveredPoint.einschätzung.toFixed(1)}</span><br>
+                <span class="tooltip-detail">Interesse: ${hoveredPoint.interesse.toFixed(1)}</span><br>
+                <span class="tooltip-detail">Bedarf: ${hoveredPoint.bedarf.toFixed(1)}</span>
+            `;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            canvas.style.cursor = 'pointer';
+        } else {
+            tooltip.style.display = 'none';
+            canvas.style.cursor = 'default';
+        }
     });
-    
-    return labels;
+
+    canvas.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+        canvas.style.cursor = 'default';
+    });
 }
 
         // Beschriftungen zeichnen
@@ -1290,7 +1333,7 @@ async function exportPageAsImage(pageId, filename, padding = 20) {
                 // Navigation im Klon ausblenden
                 const nav = clonedDoc.querySelector('.navigation');
                 if (nav) nav.style.display = 'none';
-                
+
                 // Export-Buttons im Klon ausblenden
                 const buttons = clonedDoc.querySelectorAll('.export-button, .combined-export-button');
                 buttons.forEach(btn => btn.style.display = 'none');
@@ -1298,6 +1341,10 @@ async function exportPageAsImage(pageId, filename, padding = 20) {
                 // Farbauswahl-Container ausblenden
                 const colorPicker = clonedDoc.querySelector('.color-picker-container');
                 if (colorPicker) colorPicker.style.display = 'none';
+
+                // Tooltip ausblenden (falls sichtbar)
+                const tooltip = clonedDoc.querySelector('.priority-tooltip');
+                if (tooltip) tooltip.style.display = 'none';
             }
         });
         
