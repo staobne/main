@@ -35,10 +35,11 @@ const FRAGEN_BEREICHE = [
 ];
 
 // Bereiche für die Radar-Analyse (10 Achsen)
+// 4 Fachliche Kompetenzbereiche + 3 Handlungsaspekte + 3 Didaktische Kompetenzen = 10 Achsen
 const ANALYSE_BEREICHE = [
     "Zahl und Variable",
     "Form und Raum",
-    "Grössen und Funktionen", 
+    "Grössen und Funktionen",
     "Daten und Zufall",
     "Operieren und Benennen",
     "Erforschen und Argumentieren",
