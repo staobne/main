@@ -151,11 +151,22 @@ Aktivierung: Tastatureingabe `testing`
 
 1. ~~**Werte bei Labels**: Prädikat statt Zahlen anzeigen~~ ✓ Erledigt
 2. ~~**Sortierung Prioritäten**: Zuerst nach Bedarf, dann nach Interesse sortieren~~ ✓ Erledigt
-3. **Landing Page Design**: Farbschema überarbeiten (zu rund/blau/gelb)
+3. ~~**Landing Page Design**: Farbschema überarbeiten (zu rund/blau/gelb)~~ ✓ Erledigt
 4. ~~**Punkt-Positionen**: Quadranten-Zuordnung prüfen (Farbe vs. Position)~~ ✓ Erledigt
 5. ~~**Spidergraph**: Verdeutlichen, dass höhere Einschätzung = besser~~ ✓ Erledigt
 6. ~~**Reihenfolge**: Ev. Viererfeld und Radar-Chart tauschen~~ ✓ Erledigt
 7. ~~**Legenden**: Quadranten-Erklärung mit Punkte-Legende zusammenführen~~ ✓ Erledigt
+
+## Version 3.1 - Weitere Änderungen
+
+8. **Fragen-Sortierung**: Pro Bereich erst Einschätzung, dann Interesse
+9. **IDs neu nummeriert**: Konsistente Nummerierung (1xx, 2xx, ..., 7xx)
+10. **Startseite redesigned**: Nüchterneres Design mit:
+    - Neutrales Grau (#334155) statt Blau für Überschriften
+    - Petrol (#0d9488) als dezenter Akzent für Links
+    - Weniger runde Ecken (4px statt 8px)
+    - Vertikale Linien statt gefüllte Karten
+    - Kompakterer, sachlicherer Text
 
 ## Globale Variablen
 

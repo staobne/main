@@ -1600,55 +1600,58 @@ async function exportBothPages() {
 
 // Variierter Test-Datensatz für alle Quadranten-Kombinationen
 // Bedarf = 4 - Einschätzung: Einschätzung 1→Bedarf 3, Einschätzung 3→Bedarf 1
+// IDs angepasst an neue Nummerierung (v3)
 const TEST_ANTWORTEN = {
     // =====================================================
     // Zahl und Variable: Einschätzung TIEF (1) → Bedarf HOCH (3), Interesse TIEF (1)
     // → Erwartet: Priority 2 (Viel Bedarf, tiefes Interesse)
     // =====================================================
-    101: 1, 102: 1, 104: 1, 105: 1, 106: 1, 107: 1,
-    108: 1, 109: 1, 110: 1, 111: 1, 112: 1, 113: 1, 114: 1,
-    116: 1, 117: 1, 118: 1,  // Interesse: tief
+    101: 1, 102: 1, 103: 1, 104: 1, 105: 1, 106: 1, 107: 1,
+    108: 1, 109: 1, 110: 1, 111: 1, 112: 1, 113: 1,
+    114: 1, 115: 1, 116: 1,  // Interesse: tief
 
     // =====================================================
     // Form und Raum: Einschätzung HOCH (3) → Bedarf TIEF (1), Interesse HOCH (3)
     // → Erwartet: Priority 3 (Wenig Bedarf, hohes Interesse)
     // =====================================================
-    201: 3, 203: 3, 204: 3, 205: 3, 206: 3, 207: 3,
-    208: 3, 209: 3, 210: 3, 211: 3, 212: 3, 213: 3,
-    214: 3, 215: 3, 216: 3,  // Interesse: hoch
+    201: 3, 202: 3, 203: 3, 204: 3, 205: 3, 206: 3, 207: 3,
+    208: 3, 209: 3, 210: 3, 211: 3,
+    212: 3, 213: 3, 214: 3, 215: 3,  // Interesse: hoch
 
     // =====================================================
     // Grössen und Funktionen: Einschätzung HOCH (3) → Bedarf TIEF (1), Interesse TIEF (1)
     // → Erwartet: Priority 4 (Wenig Bedarf, tiefes Interesse)
     // =====================================================
-    301: 3, 303: 1, 304: 3, 305: 3, 306: 3, 307: 3,
-    308: 3, 309: 3, 310: 3,
-    311: 1, 312: 1, 313: 1,  // Interesse: tief
+    301: 3, 302: 3, 303: 3, 304: 3, 305: 3, 306: 3, 307: 3, 308: 3,
+    309: 1, 310: 1, 311: 1, 312: 1,  // Interesse: tief
 
     // =====================================================
     // Daten und Zufall: Einschätzung TIEF (1) → Bedarf HOCH (3), Interesse HOCH (3)
     // → Erwartet: Priority 1 (Viel Bedarf, hohes Interesse)
     // =====================================================
-    401: 1, 403: 3, 404: 1, 405: 1, 406: 1, 407: 1,
-    408: 3, 409: 3, 410: 3,  // Interesse: hoch
+    401: 1, 402: 1, 403: 1, 404: 1, 405: 1,
+    406: 3, 407: 3, 408: 3, 409: 3,  // Interesse: hoch
 
     // =====================================================
     // Planung: Einschätzung MITTEL (2) → Bedarf MITTEL (2), Interesse HOCH (3)
     // → Je nach Grenzwert: könnte Priority 1 oder 3 sein
     // =====================================================
-    501: 2, 503: 3, 504: 2,  // Interesse: hoch
+    501: 2, 502: 2,
+    503: 3,  // Interesse: hoch
 
     // =====================================================
     // Beurteilung: Einschätzung MITTEL (2) → Bedarf MITTEL (2), Interesse TIEF (1)
     // → Je nach Grenzwert: könnte Priority 2 oder 4 sein
     // =====================================================
-    61: 2, 63: 1, 64: 2,  // Interesse: tief
+    601: 2, 602: 2,
+    603: 1,  // Interesse: tief
 
     // =====================================================
     // Lernbegleitung und Förderung: Einschätzung TIEF (1) → Bedarf HOCH (3), Interesse MITTEL (2)
     // → Priority 2 (Viel Bedarf, eher tiefes Interesse)
     // =====================================================
-    71: 1, 73: 2, 74: 1  // Interesse: mittel
+    701: 1, 702: 1,
+    703: 2  // Interesse: mittel
 };
 
 const TEST_PERSONAL_DATA = {

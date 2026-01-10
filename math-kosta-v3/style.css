@@ -45,15 +45,15 @@
         border-radius: 6px;
     }
 
-    /* Farbliche Differenzierung: Einschätzung vs. Interesse */
+    /* Farbliche Differenzierung: Einschätzung vs. Interesse (dezent) */
     .question-einschaetzung {
-        background-color: #f0f9ff;
-        border-left: 4px solid #2563eb;
+        background-color: #f8fafc;
+        border-left: 3px solid #94a3b8;
     }
 
     .question-interesse {
-        background-color: #fefce8;
-        border-left: 4px solid #ca8a04;
+        background-color: #fafaf9;
+        border-left: 3px solid #a8a29e;
     }
     .question-title {
         font-weight: bold;
@@ -100,14 +100,14 @@
         -webkit-appearance: none;
         width: 20px;
         height: 20px;
-        background: #2563eb;
+        background: #64748b;
         border-radius: 50%;
         cursor: pointer;
     }
     .slider::-moz-range-thumb {
         width: 20px;
         height: 20px;
-        background: #2563eb;
+        background: #64748b;
         border-radius: 50%;
         cursor: pointer;
         border: none;
@@ -123,7 +123,7 @@
         text-align: center;
         margin-top: 10px;
         font-weight: bold;
-        color: #2563eb;
+        color: #475569;
     }
     
     /* Farbauswahl-Bereich für Radar-Chart */
@@ -351,7 +351,7 @@
         box-shadow: none;
     }
     
-    /* Willkommensseite */
+    /* Willkommensseite - Nüchternes, professionelles Design */
     .welcome-container {
         max-width: 800px;
         margin: 0 auto;
@@ -359,6 +359,7 @@
     }
     h1 {
         text-align: center;
+        color: #1e293b;
     }
     @media (max-width: 600px) {
         h1 {
@@ -366,9 +367,10 @@
         }
     }
     .welcome-header {
-        color: #2563eb;
+        color: #334155;
         margin-bottom: 20px;
         text-align: center;
+        font-weight: 600;
     }
     @media (max-width: 600px) {
         .welcome-header {
@@ -376,11 +378,12 @@
         }
     }
     .welcome-card {
-        background-color: #f0f9ff;
-        border-radius: 8px;
-        padding: 25px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        margin-bottom: 30px;
+        background-color: #ffffff;
+        border-radius: 4px;
+        padding: 20px;
+        border-left: 3px solid #94a3b8;
+        margin-bottom: 16px;
+        box-shadow: none;
     }
     .sdg-image {
         max-width: 100%;
@@ -631,41 +634,44 @@
     /* ========================================= */
 
     .ilias-info-card {
-        background-color: #fef3c7;
-        border-left: 4px solid #f59e0b;
+        background-color: #f8fafc;
+        border-left: 3px solid #0d9488;
         padding: 20px;
-        margin: 15px 0;
+        margin-bottom: 16px;
+        border-radius: 4px;
     }
 
     .ilias-info-card h3 {
         margin-top: 0;
-        color: #92400e;
-        font-size: 1.2em;
+        color: #0f766e;
+        font-size: 1.1em;
+        font-weight: 600;
     }
 
     .ilias-link-box {
         background-color: #ffffff;
-        border: 2px solid #f59e0b;
-        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
         padding: 15px;
         margin: 15px 0;
     }
 
     .ilias-link-box a {
-        color: #2563eb;
+        color: #0d9488;
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 600;
         display: inline-block;
         margin-top: 5px;
     }
 
     .ilias-link-box a:hover {
         text-decoration: underline;
+        color: #0f766e;
     }
 
     .ilias-reminder {
-        background-color: #eff6ff;
-        border-left: 4px solid #3b82f6;
+        background-color: #f8fafc;
+        border-left: 3px solid #64748b;
         padding: 12px 15px;
         margin: 15px 0;
         border-radius: 4px;
@@ -673,13 +679,13 @@
     }
 
     .ilias-reminder strong {
-        color: #1e40af;
+        color: #334155;
     }
 
     .ilias-reminder a {
-        color: #2563eb;
+        color: #0d9488;
         text-decoration: none;
-        font-weight: bold;
+        font-weight: 600;
     }
 
     .ilias-reminder a:hover {

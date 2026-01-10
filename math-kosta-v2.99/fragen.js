@@ -33,7 +33,7 @@ const FRAGEN = [
     },
     {
         id: 104,
-        text: "Schätzen Sie im Folgenden <b>Ihre fachliche Kompetenz</br> in Bezug auf die genannten LP21 Kompetenzen ein: «Arithmetische Begriffe und Symbole verstehen und verwenden. Zahlen lesen und schreiben.»",
+        text: "Schätzen Sie im Folgenden <b>Ihre fachliche Kompetenz</br> in Bezug auf die genannten LP21 Kompetenzen ein. Nutzen Sie die Ergebnisse aus der Standortbestimmung Fachkompetenz Mathematik: «Arithmetische Begriffe und Symbole verstehen und verwenden. Zahlen lesen und schreiben.»",
         bereich: "Zahl und Variable",
         handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
         ebene: "einschätzung",
