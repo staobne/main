@@ -45,15 +45,15 @@
         border-radius: 6px;
     }
 
-    /* Farbliche Differenzierung: Einschätzung vs. Interesse (dezent) */
+    /* Farbliche Differenzierung: Einschätzung vs. Interesse (kräftig) */
     .question-einschaetzung {
-        background-color: #f8fafc;
-        border-left: 3px solid #94a3b8;
+        background-color: #eff6ff;
+        border-left: 3px solid #2563eb;
     }
 
     .question-interesse {
-        background-color: #fafaf9;
-        border-left: 3px solid #a8a29e;
+        background-color: #fffbeb;
+        border-left: 3px solid #f59e0b;
     }
     .question-title {
         font-weight: bold;
@@ -96,22 +96,32 @@
         -webkit-appearance: none;
         border-radius: 5px;
     }
+    /* Standard Slider - Blau für Einschätzung */
     .slider::-webkit-slider-thumb {
         -webkit-appearance: none;
         width: 20px;
         height: 20px;
-        background: #64748b;
+        background: #2563eb;
         border-radius: 50%;
         cursor: pointer;
     }
     .slider::-moz-range-thumb {
         width: 20px;
         height: 20px;
-        background: #64748b;
+        background: #2563eb;
         border-radius: 50%;
         cursor: pointer;
         border: none;
     }
+
+    /* Gelber Slider für Interesse-Fragen */
+    .question-interesse .slider::-webkit-slider-thumb {
+        background: #f59e0b;
+    }
+    .question-interesse .slider::-moz-range-thumb {
+        background: #f59e0b;
+    }
+
     .slider-labels {
         display: flex;
         justify-content: space-between;
@@ -119,11 +129,18 @@
         font-size: 0.8em;
         color: #666;
     }
+
+    /* Wertanzeige - Blau für Einschätzung */
     .slider-value {
         text-align: center;
         margin-top: 10px;
         font-weight: bold;
-        color: #475569;
+        color: #2563eb;
+    }
+
+    /* Dunklere Wertanzeige für Interesse-Fragen (bessere Lesbarkeit) */
+    .question-interesse .slider-value {
+        color: #d97706;
     }
     
     /* Farbauswahl-Bereich für Radar-Chart */
@@ -367,7 +384,7 @@
         }
     }
     .welcome-header {
-        color: #334155;
+        color: #0f766e;
         margin-bottom: 20px;
         text-align: center;
         font-weight: 600;
@@ -381,7 +398,7 @@
         background-color: #ffffff;
         border-radius: 4px;
         padding: 20px;
-        border-left: 3px solid #94a3b8;
+        border-left: 3px solid #0d9488;
         margin-bottom: 16px;
         box-shadow: none;
     }
