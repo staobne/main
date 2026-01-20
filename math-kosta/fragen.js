@@ -1,615 +1,889 @@
-// Definition der Bewertungsbereiche
-const BEREICHE = [
-    "Zahl und Variable", // 1
-    "Form und Raum",
-    "Grössen Funktionen",
-    "Daten Zufall",
-    "Beurteilung",
-    "Unterricht: Themen",
-    "Unterricht: Methoden",
-    "Schule: Schulentwicklung",
-];
-
-// Definition aller Fragen des Fragebogens
-// Jede Frage hat: id, text, bereich, ebene, typ, antwortmöglichkeiten
-// zur Auswahl stehen: slider und mc (multiple choice)
+// Definition aller Fragen des Fragebogens für Mathematik-Kompetenzstandanalyse
+// Jede Frage hat: id, text, bereich, handlungsaspekte, ebene, typ, antwortmöglichkeiten
+// Sortierung: Pro Bereich zuerst Einschätzung, dann Interesse
 
 const FRAGEN = [
-            // Zahl und Variable (Nummerierung: 1x)
-            {
-                id: 11,
-                text: "Wie gut kennen Sie sich mit den SDG aus?",
-                bereich: "Zahl und Variable",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig oder grundlegend", wert: 1 },
-                    { text: "Fortgeschritten", wert: 2 },
-                    { text: "Hohe Expertise", wert: 3 }
-                ]
-            },
-            {
-                id: 12,
-                text: "«Ich fühle mich sicher in der Daten Zufall der Leistung von Lernenden in Algebra und Arithmetik»",
-                bereich: "Beurteilung",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig oder grundlegend", wert: 1 },
-                    { text: "Fortgeschritten", wert: 2 },
-                    { text: "Hohe Expertise", wert: 3 }
-                ]
-            },
-            {
-                id: 13,
-                text: "Wie stark interessieren Sie sich für die SDG?",
-                bereich: "Zahl und Variable",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Gering           ", wert: 1 },
-                    { text: "  Mittel", wert: 2 },
-                    { text: "             Hoch", wert: 3 }
-                ]
-            },
-            {
-                id: 14,
-                text: "Um mein Unterricht zielorientierter gestalten zu können, möchte ich noch mehr über die Leitidee von Nachhaltiger Entwicklung und die Ziele einer BNE erfahren.",
-                bereich: "Zahl und Variable",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Trifft eher nicht zu", wert: 1 },
-                    { text: "Trifft eher zu", wert: 2 },
-                    { text: "Trifft zu", wert: 3 }
-                ]
-            },
-            {
-                id: 15,
-                text: "Der Lehrplan 21 bezieht sich auf das «Drei-Dimensionen-Modell der Nachhaltigen Entwicklung». Welche ist keine der drei Dimensionen?",
-                bereich: "Zahl und Variable",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Gesellschaft", wert: 1 },
-                    { text: "Umwelt", wert: 1 },
-                    { text: "Soziales", wert: 3 }, // korrekte Antwort
-                    { text: "Wirtschaft", wert: 1 }
-                ]
-            },
-            {
-                id: 16,
-                text: "Ist die Förderung einer Nachhaltigen Entwicklung in der Schweizerischen Bundesverfassung als Auftrag staatlichen Handelns festgeschrieben?",
-                bereich: "Zahl und Variable",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Ja", wert: 3 }, // korrekte Antwort
-                    { text: "Nein", wert: 1 }
-                ]
-            },
-            {
-                id: 17,
-                text: "Im BNE-Unterricht gibt es verschiedene normative Rahmen. Um welchen Ansatz handelt es sich bei: Vermittlung von Expertenwissen, Förderung nachhaltigen Verhaltens und Lernen für eine nachhaltige Entwicklung?",
-                bereich: "Zahl und Variable",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Instrumenteller Ansatz", wert: 3 }, // korrekte Antwort
-                    { text: "Emanzipatorischer Ansatz", wert: 1 },
-                    { text: "Transformativer Ansatz", wert: 1 }
-                ]
-            },
-            {
-                id: 18,
-                text: "Im BNE-Unterricht gibt es verschiedene normative Rahmen. Um welchen Ansatz handelt es sich bei: Widersprüche (dialektisch) überwinden, nicht-Vorhersehbarkeit, Emotionen, Lernen durch nachhaltige Entwicklung?",
-                bereich: "Zahl und Variable",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Instrumenteller Ansatz", wert: 1 },
-                    { text: "Emanzipatorischer Ansatz", wert: 1 },
-                    { text: "Transformativer Ansatz", wert: 3 } // korrekte Antwort
-                ]
-            },
-            {
-                id: 19,
-                text: "Welche Gefahr besteht primär bei einem emanzipatorischen Ansatz im BNE-Unterricht?",
-                bereich: "Zahl und Variable",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Gefahr der Indoktrination", wert: 1 },
-                    { text: "Gefahr des Zeitmangels", wert: 3 } // korrekte Antwort
-                ]
-            },
-            // Lehrperson: Bewusstsein (Nummerierung: 2x)
-            {
-                id: 21,
-                text: "Ich fühle mich sicher, wie ich im BNE-Unterricht meinen Standpunkt und meine Meinung vertreten darf und kann.",
-                bereich: "Lehrperson: Bewusstsein",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Trifft nicht zu", wert: 1 },
-                    { text: "Trifft eher zu", wert: 2 },
-                    { text: "Trifft zu", wert: 3 }
-                ]
-            },
-            {
-                id: 22,
-                text: "Ich möchte mehr über den Beutelsbacher Konsens erfahren und mich mit der Umsetzung von BNE im Unterricht auseinandersetzen",
-                bereich: "Lehrperson: Bewusstsein",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Trifft eher nicht zu", wert: 1 },
-                    { text: "Trifft eher zu", wert: 2 },
-                    { text: "Trifft sehr zu", wert: 3 }
-                ]
-            },
-            {
-                id: 23,
-                text: "Der Beutelsbacher Konsens besagt, dass sich Lehrpersonen im Unterricht nicht zu politisch heiklen Themen äussern sollten.",
-                bereich: "Lehrperson: Bewusstsein",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Richtig", wert: 1 },
-                    { text: "Falsch", wert: 3 }, // korrekte Antwort
-                    { text: "Teilweise richtig", wert: 1 },
-                ]
-            },
-            {
-                id: 24,
-                text: "Ich kann mich gut zu den Zielen einer (B)NE positionieren und habe eine klare Haltung zu dem aktuellen Diskurs.",
-                bereich: "Lehrperson: Bewusstsein",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Trifft nicht zu", wert: 1 },
-                    { text: "Trifft eher zu", wert: 2 },
-                    { text: "Trifft zu", wert: 3 }
-                ]
-            },
-            {
-                id: 25,
-                text: "Ich fühle mich noch nicht sicher, wie ich im BNE-Unterricht meinen Standpunkt und meine Meinung vertreten kann. Ich möchte deshalb noch mehr darüber erfahren, was im BNE-Unterricht erwünscht, und was verboten ist.",
-                bereich: "Lehrperson: Bewusstsein",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Trifft nicht zu", wert: 1 },
-                    { text: "Trifft teilweise zu", wert: 2 },
-                    { text: "Trifft zu", wert: 3 }
-                ]
-            },
+    // ===== ZAHL UND VARIABLE ===== id 1xx
+    // --- Einschätzung ---
+    {
+        id: 101,
+        text: "Wie sicher fühlen Sie sich inhaltlich beim Erklären und Formulieren von Förderhinweisen zu den Grundrechenarten?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen", "Lernbegleitung und Förderung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Eher unsicher", wert: 1 },
+            { text: "Eher sicher", wert: 2 },
+            { text: "Sehr sicher", wert: 3 }
+        ]
+    },
+    {
+        id: 102,
+        text: "Wie sicher fühlen Sie sich inhaltlich beim Erklären und Formulieren von Förderhinweisen zum Stellenwertsystem?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen", "Lernbegleitung und Förderung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Eher unsicher", wert: 1 },
+            { text: "Eher sicher", wert: 2 },
+            { text: "Sehr sicher", wert: 3 }
+        ]
+    },
+    {
+        id: 103,
+        text: "Schätzen Sie im Folgenden <b>Ihre fachliche Kompetenz</br> in Bezug auf die genannten LP21 Kompetenzen ein: «Arithmetische Begriffe und Symbole verstehen und verwenden. Zahlen lesen und schreiben.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 104,
+        text: "«Flexibel zählen, Zahlen nach der Grösse ordnen und Ergebnisse überschlagen.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 105,
+        text: "«Addieren, subtrahieren, multiplizieren, dividieren und potenzieren.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 106,
+        text: "«Terme vergleichen und umformen, Gleichungen lösen, Gesetze und Regeln anwenden.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 107,
+        text: "«Zahl- und Operationsbeziehungen sowie arithmetische Muster erforschen und Erkenntnisse austauschen.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 108,
+        text: "«Aussagen, Vermutungen und Ergebnisse zu Zahlen und Variablen erläutern, überprüfen, begründen.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 109,
+        text: "«Beim Erforschen arithmetischer Muster Hilfsmittel nutzen.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 110,
+        text: "«Rechenwege darstellen, beschreiben, austauschen und nachvollziehen.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 111,
+        text: "«Anzahlen, Zahlenfolgen und Terme veranschaulichen, beschreiben und verallgemeinern.»",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 112,
+        text: "Können Sie Schüler*innen beim Erkunden von Zahlenmustern methodisch unterstützen?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren", "Lernbegleitung und Förderung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    {
+        id: 113,
+        text: "Wie schätzen Sie Ihre Kompetenzen ein in Bezug auf Unterrichtsplanung in Arithmetik und Algebra?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Planung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Wenig Kompetenz", wert: 0 },
+            { text: "Mittlere Kompetenz", wert: 1 },
+            { text: "Hohe Kompetenz", wert: 2 },
+            { text: "Sehr hohe Kompetenz", wert: 3 }
+        ]
+    },
+    // --- Interesse ---
+    {
+        id: 114,
+        text: "Inwiefern interessieren Sie sich für arithmetische und algebraische Inhalte im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Operieren und Benennen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 115,
+        text: "Inwiefern interessieren Sie sich für arithmetische und algebraische Inhalte im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Erforschen und Argumentieren"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 116,
+        text: "Inwiefern interessieren Sie sich für arithmetische und algebraische Inhalte im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Zahl und Variable",
+        handlungsaspekte: ["Zahl und Variable", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
 
-            // Grössen Funktionen (Nummerierung: 3x)
-            {
-                id: 31,
-                text: "Wie stark beschäftigt Sie die Frage, wie Ihr Handeln als Lehrperson das Lernen der Schüler*innen in Bezug auf BNE beeinflusst?",
-                bereich: "Grössen Funktionen",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig", wert: 1 },
-                    { text: "Mittel", wert: 2 },
-                    { text: "Stark", wert: 3 }
-                ]
-            },
-            {
-                id: 32,
-                text: "Die lernförderlichen Gelegenheiten werden im Rahmen der Agenda 2030 zusammen mit den Schlüsselkompetenzen einer BNE als wichtig erachtet.",
-                bereich: "Grössen Funktionen",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Richtig", wert: 3 }, // korrekte Antwort
-                    { text: "Falsch", wert: 1 }, 
-                   
-                ]
-            },
-            {
-                id: 33,
-                text: "Der Whole Institution Approach (WIA) zeigt Möglichkeiten auf, wie BNE in der Schule ohne Einbezug von ausserschulischen Akteur:innen umgesetzt werden kann.",
-                bereich: "Grössen Funktionen",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Richtig", wert: 1 }, 
-                    { text: "Falsch", wert: 3 }, // korrekte Antwort
-                   
-                ]
-            },
-            {
-                id: 35,
-                text: "Inwiefern haben Sie BNE bereits in Ihrem Unterricht / in Ihren Praktika integrieren können?",
-                bereich: "Grössen Funktionen",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Gar nicht", wert: 1 },
-                    { text: "Ein bisschen", wert: 2 },
-                    { text: "Stark", wert: 3 }
-                ]
-            },
-            {
-                id: 36,
-                text: "Um mein eigenes Rollen- und Funktionsverständnis in Zusammenhang mit nachhaltiger Entwicklung und BNE als Lehrperson zu definieren, möchte ich mich mit entsprechenden Konzepten auseinandersetzen.",
-                bereich: "Grössen Funktionen",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Stimme eher nicht zu", wert: 1 },
-                    { text: "Stimme teilweise zu", wert: 2 },
-                    { text: "Stimme zu", wert: 3 }
-                ]
-            },
+    // ===== FORM UND RAUM ===== id 2xx
+    // --- Einschätzung ---
+    {
+        id: 201,
+        text: "Wie gut können Sie geometrische Zusammenhänge visualisieren?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Eher schlecht", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    {
+        id: 202,
+        text: "Können Sie Schüler*innen beim Entdecken geometrischer Eigenschaften anleiten?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    {
+        id: 203,
+        text: "Schätzen Sie im Folgenden <i>Ihre fachliche Kompetenz</i> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden Begriffe und Symbole.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 204,
+        text: "«Figuren und Körper abbilden, zerlegen und zusammensetzen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 205,
+        text: "«Längen, Flächen und Volumen bestimmen und berechnen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 206,
+        text: "«Geometrische Beziehungen, insbesondere zwischen Längen, Flächen und Volumen, erforschen, Vermutungen formulieren und Erkenntnisse austauschen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 207,
+        text: "«Aussagen und Formeln zu geometrischen Beziehungen überprüfen, mit Beispielen belegen und begründen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 208,
+        text: "«Körper und räumliche Beziehungen darstellen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 209,
+        text: "«Figuren falten, skizzieren, zeichnen und konstruieren sowie Darstellungen zur ebenen Geometrie austauschen und überprüfen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 210,
+        text: "«Sich Figuren und Körper in verschiedenen Lagen vorstellen, Veränderungen darstellen und beschreiben (Kopfgeometrie).»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 211,
+        text: "«An einem Koordinatensystem die Koordinaten von Figuren und Körpern bestimmen bzw. Figuren und Körper aufgrund ihrer Koordinaten darstellen sowie Pläne lesen und zeichnen.»",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    // --- Interesse ---
+    {
+        id: 212,
+        text: "Interessieren Sie sich für räumliches Vorstellungsvermögen?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Mittel", wert: 2 },
+            { text: "Sehr", wert: 3 }
+        ]
+    },
+    {
+        id: 213,
+        text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Operieren und Benennen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 214,
+        text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Erforschen und Argumentieren"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 215,
+        text: "Inwiefern interessieren Sie sich für geometrische Inhalte im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Form und Raum",
+        handlungsaspekte: ["Form und Raum", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
 
-            // Daten Zufall (Nummerierung: 4x)
-            {
-                id: 41,
-                text: "Ich kenne bereits viele BNE-relevante Prinzipien, die ich im Unterricht umsetzen kann.",
-                bereich: "Daten Zufall",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Trifft nicht zu", wert: 1 },
-                    { text: "Trifft teilweise zu", wert: 2 },
-                    { text: "Trifft zu", wert: 3 }
-                ]
-            },
-            {
-                id: 42,
-                text: "Aktualitätsbezug ist als eines von drei didaktischen BNE-Prinzipen im Lehrplan 21 verankert. Ist die Aussage korrekt?",
-                bereich: "Daten Zufall",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Ja", wert: 1 },
-                    { text: "Nein", wert: 3 } // korrekte Antwort
-                ]
-            },
-            {
-                id: 43,
-                text: "«Im Unterricht werden eigene und kollektive Denkweisen und Werte aufgespürt und miteinander verglichen.» Um welches pädagogische Prinzip von éducation21 handelt es sich?",
-                bereich: "Daten Zufall",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Wertereflexion und Handlungsorientierung", wert: 3 }, // korrekte Antwort
-                    { text: "Chancengerechtigkeit", wert: 1 },
-                    { text: "Partizipation und Empowerment", wert: 1 }
-                ]
-            },
-            {
-                id: 44,
-                text: "«Nachhaltige Entwicklung ist ein optimistischer Ansatz, der sich an einer positiven Zukunft orientiert.» Um welches pädagogische Prinzip von éducation21 handelt es sich?",
-                bereich: "Daten Zufall",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Visionsorientierung", wert: 3 }, // korrekte Antwort
-                    { text: "Vernetztes Denken", wert: 1 },
-                    { text: "Partizipation und Empowerment", wert: 1 }
-                ]
-            },
-            {
-                id: 45,
-                text: "Um die BNE-Prinzipien noch besser verstehen zu können, möchte ich mich vertiefter mit diesen befassen.",
-                bereich: "Daten Zufall",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Stimme eher nicht zu", wert: 1 },
-                    { text: "Stimme teilweise zu", wert: 2 },
-                    { text: "Stimme zu", wert: 3 }
-                ]
-            },
+    // ===== GRÖSSEN UND FUNKTIONEN ===== id 3xx
+    // --- Einschätzung ---
+    {
+        id: 301,
+        text: "Wie sicher sind Sie im Umgang mit proportionalen Zusammenhängen?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Eher unsicher", wert: 1 },
+            { text: "Sicher", wert: 2 },
+            { text: "Sehr sicher", wert: 3 }
+        ]
+    },
+    {
+        id: 302,
+        text: "Können Sie Lernende bei der Modellierung von Alltagssituationen unterstützen?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    {
+        id: 303,
+        text: "Schätzen Sie im Folgenden <i>Ihre fachliche Kompetenz</i> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden Begriffe und Symbole zu Grössen und Funktionen»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 304,
+        text: "«Grössen schätzen, messen, umwandeln, runden und mit ihnen rechnen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 305,
+        text: "«Funktionale Zusammenhänge beschreiben und Funktionswerte bestimmen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 306,
+        text: "«Zu Grössenbeziehungen und funktionalen Zusammenhängen Fragen formulieren, diese erforschen sowie Ergebnisse überprüfen und begründen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 307,
+        text: "«Sachsituationen mathematisieren, darstellen, berechnen sowie Ergebnisse interpretieren und überprüfen.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 308,
+        text: "«Terme, Formeln, Gleichungen und Tabellen mit Sachsituationen konkretisieren.»",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    // --- Interesse ---
+    {
+        id: 309,
+        text: "Wie interessiert sind Sie an funktionalen Zusammenhängen?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Mittel", wert: 2 },
+            { text: "Sehr", wert: 3 }
+        ]
+    },
+    {
+        id: 310,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereichs Grössen und Funktionen im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Operieren und Benennen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 311,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereichs Grössen und Funktionen im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Erforschen und Argumentieren"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 312,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereichs Grössen und Funktionen im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Grössen und Funktionen",
+        handlungsaspekte: ["Grössen und Funktionen", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
 
-            // Beurteilung (Nummerierung: 5x)
-            {
-                id: 51,
-                text: "Wie gut können Sie BNE-Kompetenzen in Ihrem Unterricht fördern?",
-                bereich: "Beurteilung",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Grundlegend", wert: 1 },
-                    { text: "Gut", wert: 2 },
-                    { text: "Sehr gut", wert: 3 }
-                ]
-            },
-            {
-                id: 52,
-                text: "Die von éducation21 formulierten Kompetenzen können den DeSeCo-Schlüsselkompetenzen zugeordnet werden. Zu welcher Kategorie gehören Verantwortung, Werte und Handeln?",
-                bereich: "Beurteilung",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Interaktive Verwendung von Medien und Tools", wert: 1 },
-                    { text: "Interagieren in heterogenen Gruppen", wert: 1 },
-                    { text: "Eigenständiges Handeln", wert: 3 } // korrekte Antwort
-                ]
-            },
-            {
-                id: 53,
-                text: "Im Lehrplan 21 sind spezifische BNE-Kompetenzen ausformuliert.",
-                bereich: "Beurteilung",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Ja", wert: 1 },
-                    { text: "Nein, nur über fächerübergreifende Querverweise", wert: 3 }, // korrekte Antwort
-                    { text: "Nein, überhaupt nicht", wert: 1 }
-                ]
-            },
-            {
-                id: 54,
-                text: "Wie gut kennen Sie sich mit den BNE-Kompetenzen aus?",
-                bereich: "Beurteilung",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig Kenntnisse", wert: 1 },
-                    { text: "Mittlere Kompetenzen", wert: 2 },
-                    { text: "Hohe Kompetenzen", wert: 3 }
-                ]
-            },
-            {
-                id: 55,
-                text: "Um welche BNE-Kompetenz nach éducation21 handelt es sich: «Sich als Teil der Welt erfahren (Sich selbst, die soziale und natürliche Umwelt ganzheitlich und im globalen Kontext wahrnehmen)»?",
-                bereich: "Beurteilung",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Verantwortung", wert: 3 }, // korrekte Antwort
-                    { text: "Partizipation", wert: 1 },
-                    { text: "Kooperation", wert: 1 }
-                ]
-            },
-            {
-                id: 56,
-                text: "Um meinen Unterricht kompetenzorientiert gestalten zu können, möchte ich mich noch vertiefter mit den BNE-Kompetenzen auseinandersetzen.",
-                bereich: "Beurteilung",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Stimme eher nicht zu", wert: 1 },
-                    { text: "Stimme teilweise zu", wert: 2 },
-                    { text: "Stimme zu", wert: 3 }
-                ]
-            },
-            {
-                id: 57,
-                text: "Wie schätzen Sie Ihre Kompetenzen im Bereich der BNE im Unterricht ein?",
-                bereich: "Beurteilung",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig Kenntnisse", wert: 1 },
-                    { text: "Mittlere Kompetenzen", wert: 2 },
-                    { text: "Hohe Kompetenzen", wert: 3 }
-                ]
-            },
-            {
-                id: 58,
-                text: "Die Kompetenz zur integrierten Problemlösung (Schlüsselkompetenzen für BNE im Rahmen der Agenda 2030) beinhaltet die Fähigkeit die eigenen Werte, Wahrnehmungen und Handlungen zu reflektieren.",
-                bereich: "Beurteilung",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Ja", wert: 1 }, 
-                    { text: "Nein", wert: 3 }, // korrekte Antwort
-                 
-                ]
-            },
+    // ===== DATEN UND ZUFALL ===== id 4xx
+    // --- Einschätzung ---
+    {
+        id: 401,
+        text: "Wie kompetent fühlen Sie sich bei der Interpretation von Diagrammen?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Wenig kompetent", wert: 0 },
+            { text: "Eher wenig", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 402,
+        text: "Können Sie Schüler*innen beim kritischen Hinterfragen von Statistiken anleiten?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    {
+        id: 403,
+        text: "Schätzen Sie im Folgenden <i>Ihre fachliche Kompetenz</i> in Bezug auf die genannten LP21 Kompetenz ein: «Die Schülerinnen und Schüler verstehen und verwenden Begriffe und Symbole zu Daten und Zufall»",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Operieren und Benennen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 404,
+        text: "«Sachsituationen zur Statistik, Kombinatorik und Wahrscheinlichkeit erforschen, Vermutungen formulieren und überprüfen.»",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Erforschen und Argumentieren"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 405,
+        text: "«Daten zu Statistik, Kombinatorik und Wahrscheinlichkeit erheben, ordnen, darstellen, auswerten und interpretieren.»",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Mathematisieren und Darstellen"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    // --- Interesse ---
+    {
+        id: 406,
+        text: "Interessieren Sie sich für Statistik und Wahrscheinlichkeitsrechnung?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Mittel", wert: 2 },
+            { text: "Sehr", wert: 3 }
+        ]
+    },
+    {
+        id: 407,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereichs Daten und Zufall im Handlungsaspekt Operieren und Benennen?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Operieren und Benennen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 408,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereichs Daten und Zufall im Handlungsaspekt Erforschen und Argumentieren?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Erforschen und Argumentieren"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
+    {
+        id: 409,
+        text: "Inwiefern interessieren Sie sich für Inhalte des Kompetenzbereichs Daten und Zufall im Handlungsaspekt Mathematisieren und Darstellen?",
+        bereich: "Daten und Zufall",
+        handlungsaspekte: ["Daten und Zufall", "Mathematisieren und Darstellen"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig interessiert", wert: 1 },
+            { text: "Interessiert", wert: 2 },
+            { text: "Sehr interessiert", wert: 3 }
+        ]
+    },
 
-            // Unterricht: Themen (Nummerierung: 6x)
-            {
-                id: 61,
-                text: "Wie gut kennen Sie die fächerübergreifenden Themen zu nachhaltiger Entwicklung im Lehrplan 21?",
-                bereich: "Unterricht: Themen",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig", wert: 1 },
-                    { text: "Gut", wert: 2 },
-                    { text: "Sehr gut", wert: 3 }
-                ]
-            },
-            {
-                id: 62,
-                text: "Im Lehrplan 21 ist das Thema \"Geschlechter und Gleichstellung\" kein fächerübergreifendes Thema im Kontext Bildung für nachhaltige Entwicklung.",
-                bereich: "Unterricht: Themen",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Richtig", wert: 1 },
-                    { text: "Falsch", wert: 3 } // korrekte Antwort
-                ]
-            },
-            {
-                id: 63,
-                text: "Im Lehrplan 21 werden sieben fächerübergreifende Themen unter der Leitidee Nachhaltiger Entwicklung aufgeführt.",
-                bereich: "Unterricht: Themen",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Richtig", wert: 3 }, // korrekte Antwort
-                    { text: "Falsch", wert: 1 }
-                ]
-            },
-            {
-                id: 64,
-                text: "Wie interessiert sind Sie daran, sich mit fächerübergreifenden Themen zur nachhaltigen Entwicklung auseinanderzusetzen?",
-                bereich: "Unterricht: Themen",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig interessiert", wert: 1 },
-                    { text: "Interessiert", wert: 2 },
-                    { text: "sehr interessiert", wert: 3 }
-                ]
-            },
-            {
-                id: 65,
-                text: "Im Lehrplan 21 finden sich zusätzlich zu den fächerübergreifenden Themen bei den fachspezifischen Kompetenzen noch BNE-Verweise.",
-                bereich: "Unterricht: Themen",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Nein", wert: 1 },
-                    { text: "Ja", wert: 3 } // korrekte Antwort
-                ]
-            },
-            {
-                id: 66,
-                text: "Ich kann mir vorstellen auch weitere Themen interdisziplinär in meinen Fächern zu behandeln.",
-                bereich: "Unterricht: Themen",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig interessiert", wert: 1 },
-                    { text: "Interessiert", wert: 2 },
-                    { text: "Sehr interessiert", wert: 3 }
-                ]
-            },
+    // ===== PLANUNG ===== id 5xx
+    // --- Einschätzung ---
+    {
+        id: 501,
+        text: "Wie sicher fühlen Sie sich bei der Planung von Mathematikunterricht (einzelnen Lektionen)?",
+        bereich: "Planung",
+        handlungsaspekte: ["Planung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Eher unsicher", wert: 1 },
+            { text: "Sicher", wert: 2 },
+            { text: "Sehr sicher", wert: 3 }
+        ]
+    },
+    {
+        id: 502,
+        text: "Können Sie Mathematikstunden an verschiedene Lernvoraussetzungen anpassen?",
+        bereich: "Planung",
+        handlungsaspekte: ["Planung", "Lernbegleitung und Förderung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    // --- Interesse ---
+    {
+        id: 503,
+        text: "Interessieren Sie sich für innovative Unterrichtsmethoden in Mathematik?",
+        bereich: "Planung",
+        handlungsaspekte: ["Planung"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Mittel", wert: 2 },
+            { text: "Sehr", wert: 3 }
+        ]
+    },
 
-            // Unterricht: Methoden (Nummerierung: 7x)
-            {
-                id: 71,
-                text: "Wie gut beherrschen Sie unterschiedliche Methoden zur Förderung von BNE im Unterricht?",
-                bereich: "Unterricht: Methoden",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Grundlegend", wert: 1 },
-                    { text: "Gut", wert: 2 },
-                    { text: "Sehr gut", wert: 3 }
-                ]
-            },
-            {
-                id: 72,
-                text: "Für die Förderung von kreativen Lösungsansätzen bei Nachhaltigkeitsproblemen eignet sich im Kontext von BNE die Methode Design Thinking.",
-                bereich: "Unterricht: Methoden",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Ja", wert: 3 }, // korrekte Antwort
-                    { text: "Nein", wert: 1 }
-                ]
-            },
-            {
-                id: 73,
-                text: "Schüler*innen setzen sich mit einem moralischen Dilemma auseinander und beschreiben ihre Gefühle. Welcher Unterrichtszugang trifft am besten zu?",
-                bereich: "Unterricht: Methoden",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Transformatives Lernen", wert: 3 }, // korrekte Antwort
-                    { text: "Entdeckendes Lernen", wert: 1 },
-                    { text: "Situatives Lernen", wert: 1 }
-                ]
-            },
-            {
-                id: 74,
-                text: "Wie interessiert sind Sie daran, diese Unterrichtsmethoden für BNE in Ihrem Unterricht umzusetzen?",
-                bereich: "Unterricht: Methoden",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig interessiert", wert: 1 },
-                    { text: "Interessiert", wert: 2 },
-                    { text: "sehr interessiert", wert: 3 }
-                ]
-            },
-            {
-                id: 75,
-                text: "Das problembasierte Lernen ist eine Methode der Zukunftswerkstatt.",
-                bereich: "Unterricht: Methoden",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Ja", wert: 1 }, 
-                    { text: "Nein", wert: 3 }, // korrekte Antwort
-                ]
-            },
+    // ===== BEURTEILUNG ===== id 6x
+    // --- Einschätzung ---
+    {
+        id: 601,
+        text: "Wie kompetent fühlen Sie sich bei der Beurteilung mathematischer Leistungen?",
+        bereich: "Beurteilung",
+        handlungsaspekte: ["Beurteilung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Eher wenig kompetent", wert: 1 },
+            { text: "Kompetent", wert: 2 },
+            { text: "Sehr kompetent", wert: 3 }
+        ]
+    },
+    {
+        id: 602,
+        text: "Können Sie Lernenden konstruktives Feedback zu mathematischen Lösungswegen geben?",
+        bereich: "Beurteilung",
+        handlungsaspekte: ["Beurteilung", "Lernbegleitung und Förderung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    // --- Interesse ---
+    {
+        id: 603,
+        text: "Interessieren Sie sich für alternative Beurteilungsformen?",
+        bereich: "Beurteilung",
+        handlungsaspekte: ["Beurteilung"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Mittel", wert: 2 },
+            { text: "Sehr", wert: 3 }
+        ]
+    },
 
-            // Schule: Schulentwicklung (Nummerierung: 8x)
-            {
-                id: 81,
-                text: "Welche der untenstehenden Massnahmen ist für den Whole Institution Approach <mark> nicht </mark> von zentraler Bedeutung?",
-                bereich: "Schule: Schulentwicklung",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Fächerübergreifende Projekte", wert: 1 },
-                    { text: "Politische Einstellung von Lehrpersonen", wert: 3 }, // korrekte Antwort
-                    { text: "Partizipative Schulkultur", wert: 1 },
-                ]
-            },
-            {
-                id: 82,
-                text: "Das wichtigste Anliegen des Whole Institution Approaches ist es, dass alle Lehrpersonen BNE in ihrem Unterricht umsetzen.",
-                bereich: "Schule: Schulentwicklung",
-                ebene: "objektiv",
-                typ: "mc",
-                antworten: [
-                    { text: "Ja", wert: 3 }, // korrekte Antwort
-                    { text: "Nein", wert: 1 }
-                ]
-            },
-            {
-                id: 83,
-                text: "Wie gut verstehen Sie das Konzept des Whole Institution Approach für die Umsetzung von BNE?",
-                bereich: "Schule: Schulentwicklung",
-                ebene: "subjektiv",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Grundlegend", wert: 1 },
-                    { text: "Gut", wert: 2 },
-                    { text: "Sehr gut", wert: 3 }
-                ]
-            },
-            {
-                id: 84,
-                text: "Wie interessiert sind Sie an der Umsetzung von BNE im schulischen Kontext als angehende Lehrperson?",
-                bereich: "Schule: Schulentwicklung",
-                ebene: "interesse",
-                typ: "slider",
-                antworten: [
-                    { text: "Keine Antwort", wert: 0 },
-                    { text: "Wenig interessiert", wert: 1 },
-                    { text: "Interessiert", wert: 2 },
-                    { text: "sehr interessiert", wert: 3 }
-                ]
-            }
-    
-        ];
+    // ===== LERNBEGLEITUNG UND FÖRDERUNG ===== id 7x
+    // --- Einschätzung ---
+    {
+        id: 701,
+        text: "Wie sicher fühlen Sie sich bei der individuellen Förderung in Mathematik?",
+        bereich: "Lernbegleitung und Förderung",
+        handlungsaspekte: ["Lernbegleitung und Förderung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Eher unsicher", wert: 1 },
+            { text: "Sicher", wert: 2 },
+            { text: "Sehr sicher", wert: 3 }
+        ]
+    },
+    {
+        id: 702,
+        text: "Können Sie mathematische Begabungen erkennen und fördern?",
+        bereich: "Lernbegleitung und Förderung",
+        handlungsaspekte: ["Lernbegleitung und Förderung"],
+        ebene: "einschätzung",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Gut", wert: 2 },
+            { text: "Sehr gut", wert: 3 }
+        ]
+    },
+    // --- Interesse ---
+    {
+        id: 703,
+        text: "Interessieren Sie sich für den Umgang mit Rechenschwäche?",
+        bereich: "Lernbegleitung und Förderung",
+        handlungsaspekte: ["Lernbegleitung und Förderung"],
+        ebene: "interesse",
+        typ: "slider",
+        antworten: [
+            { text: "Keine Antwort", wert: 0 },
+            { text: "Wenig", wert: 1 },
+            { text: "Mittel", wert: 2 },
+            { text: "Sehr", wert: 3 }
+        ]
+    }
+];
 
-        export { BEREICHE, FRAGEN };
+export { FRAGEN };

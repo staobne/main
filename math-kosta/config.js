@@ -23,50 +23,82 @@ const FACH_BESCHREIBUNGEN = {
     "L": "Latein"
 };
 
-// Liste der verfügbaren Lerngelegenheiten
+// Bereiche für die Fragenorganisation (7 Seiten)
+const FRAGEN_BEREICHE = [
+    "Zahl und Variable", //1
+    "Form und Raum",    //2
+    "Grössen und Funktionen",   //3
+    "Daten und Zufall", //4
+    "Planung",  //5
+    "Beurteilung", //6
+    "Lernbegleitung und Förderung" //6
+];
+
+// Bereiche für die Radar-Analyse (10 Achsen)
+const ANALYSE_BEREICHE = [
+    "Zahl und Variable",
+    "Form und Raum",
+    "Grössen und Funktionen", 
+    "Daten und Zufall",
+    "Operieren und Benennen",
+    "Erforschen und Argumentieren",
+    "Mathematisieren und Darstellen",
+    "Planung",
+    "Beurteilung",
+    "Lernbegleitung und Förderung"
+];
+
+// Liste der verfügbaren Lerngelegenheiten (für Mathematik angepasst)
+// id: Eindeutige Kennung der Lerngelegenheit, wird sonst nirgends benötigt.
 const LERNGELEGENHEITEN = [
     {
-        id: "mikroplanung",
+        id: "mikroplanung_math",
         semester: "HS",
         kategorie: "Mikroplanung",
         titel: "Mikroplanung Mathematik"
     },
     {
-        id: "marko-erforschen",
+        id: "makro_erforschen",
         semester: "HS & FS",
         kategorie: "Makroplanung",
         titel: "Erforschen und Argumentieren"
     },
-    {
-        id: "zukunftskompetenzen",
+        {
+        id: "makro_planen",
         semester: "HS & FS",
-        kategorie: "Beratung & Begleitung",
-        titel: "Zukunftskompetenzen"
+        kategorie: "Makroplanung",
+        titel: "Makroplanung Mathematik: Lernprozesse planen"
     },
     {
-        id: "partizipativ",
+        id: "summative_beurteilung",
         semester: "HS & FS",
-        kategorie: "Zusammenarbeit & Kommunikation",
-        titel: "Schule partizipativ gestalten"
+        kategorie: "Summative Beurteilung",
+        titel: "Summative Beurteilung Mathematikunterricht"
     },
     {
-        id: "bne_konzept",
+        id: "beurteilung_math",
         semester: "HS & FS",
-        kategorie: "Persönliche und professionelle Entwicklung",
-        titel: "Persönliches BNE-Konzept … hä?"
+        kategorie: "Formative Beurteilung",
+        titel: "Formative Beurteilung Mathematik"
     },
     {
-        id: "achtsamkeit",
-        semester: "HS",
-        kategorie: "Klassenführung",
-        titel: "Sozio-emotionales Lernen & Beziehungsgestaltung – Achtsamkeit in der Schule"
+        id: "rechenschwaeche",
+        semester: "HS & FS",
+        kategorie: "Beratung und Begleitung",
+        titel: "Diverse Lerngelegenheiten"
     },
     {
-        id: "heterogenitaet",
-        semester: "HS",
-        kategorie: "Klassenführung",
-        titel: "Heterogenität im Klassenzimmer – mögliche Diagnosen und der Umgang damit"
+        id: "alltagsbezug",
+        semester: "HS & FS",
+        kategorie: "Fachkompetenz",
+        titel: "Mathematik als Produkt und Prozess"
+    },
+    {
+        id: "diverse_angebote",
+        semester: "HS & FS",
+        kategorie: "Diverse Module",
+        titel: "Weitere, hier nicht aufgelistete Lerngelegenheiten"
     },
 ];
 
-export { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN };
+export { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE, LERNGELEGENHEITEN };

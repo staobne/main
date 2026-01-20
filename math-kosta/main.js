@@ -1,5 +1,22 @@
-import { BEREICHE, FRAGEN } from './fragen.js';
-import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config.js';
+import { FRAGEN } from './fragen.js';
+import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, FRAGEN_BEREICHE, ANALYSE_BEREICHE, LERNGELEGENHEITEN } from './config.js';
+
+/* 
+1) Werte bei Labels bringen nix. => Prädikat?
+2) Die Priorität sollte sich zuerst am BEdarf und dann am Interesse orientieren. Die Nummerireung sollte das widerspiegeln.
+3) Landing Page ist alles andere als schön, ev. zu rund, zu blau und zu gelb. Anderes Farbschema?
+4) Position der Punkte stimmt noch nicht, auch im grauen Feld, obwohl gelb - oder umegekhrt.
+5) Spidergraph: Klar machen, dass Einschätzung je höher, desto besser.
+6) Ev. Viererfeld und Graph umdrehen.
+7) Ev. Legende zu Viererfeld mit Legende zu den Punkten vereinen.
+
+Version 2.99 - Änderungen:
+- Objektive Fragen entfernt (nur noch Einschätzung und Interesse)
+- 2 Ebenen: einschätzung, interesse
+- Spidergraph mit 2 Datenreihen
+- Viererfeld: Bedarf = MAX_WERT + 1 - Einschätzung
+- Farbliche Differenzierung der Fragen (Einschätzung blau, Interesse gelb)
+*/
 
         // =========================================================
         // FRAGENKATALOG - BEGINN
@@ -86,14 +103,14 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             // Startseite und persönliche Daten-Seite sind bereits im HTML vorhanden
             
             // Gruppiere Fragen nach Bereichen für bessere Organisation
-            const bereicheFragen = BEREICHE.reduce((acc, bereich) => {
+            const bereicheFragen = FRAGEN_BEREICHE.reduce((acc, bereich) => {
                 acc[bereich] = FRAGEN.filter(frage => frage.bereich === bereich);
                 return acc;
             }, {});
             
             // Erstelle für jeden Bereich eine eigene Fragensei
             let pageIndex = 1; // Start bei 1, weil 0 bereits persönliche Daten sind
-            BEREICHE.forEach(bereich => {
+            FRAGEN_BEREICHE.forEach(bereich => {
                 const pageId = `page-${pageIndex}`;
                 pages.push(pageId);
                 
@@ -118,8 +135,10 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                 pageIndex++;
             });
             
-            // Final-Seite als letzte Seite hinzufügen
-            pages.push('page-final');
+            // Final-Seite und Prioritäts-Seite als letzte Seiten hinzufügen
+            // Reihenfolge: Erst Radar-Chart (Spidergraph), dann Viererfeld (Prioritätsmatrix)
+            pages.push('page-final');    // Radar-Chart / Spidergraph
+            pages.push('page-priority'); // Viererfeld / Prioritätsmatrix
             
             // Fortschrittsanzeige erstellen
             updateProgressIndicator();
@@ -152,7 +171,7 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             }
             
             const bereichIndex = currentPage - 2; // -2 wegen Start- und persönlicher Daten-Seite
-            const bereich = BEREICHE[bereichIndex];
+            const bereich = FRAGEN_BEREICHE[bereichIndex];
             const bereichContainer = document.getElementById(`bereich-${currentPage - 1}`);
             
             // Fragen für diesen Bereich filtern
@@ -160,13 +179,16 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             
             // HTML für alle Fragen des Bereichs erstellen
             bereichContainer.innerHTML = bereichFragen.map(frage => {
+                // CSS-Klasse basierend auf Ebene für farbliche Differenzierung
+                const ebeneClass = frage.ebene === 'interesse' ? 'question-interesse' : 'question-einschaetzung';
+
                 if (frage.typ === 'slider') {
                     return `
-                        <div class="question-card">
+                        <div class="question-card ${ebeneClass}">
                             <div class="question-title">${frage.text}</div>
-                            <div class="meta-info">
-                                Ebene: ${frage.ebene}
-                            </div>
+                            <!---<div class="meta-info">
+                                Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
+                            </div>--->
                             <div class="slider-container">
                                 <input 
                                     type="range" 
@@ -189,11 +211,11 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                     `;
                 } else {
                     return `
-                        <div class="question-card">
+                        <div class="question-card ${ebeneClass}">
                             <div class="question-title">${frage.text}</div>
-                            <div class="meta-info">
-                                Ebene: ${frage.ebene}
-                            </div>
+                            <!---<div class="meta-info">
+                                Ebene: ${frage.ebene} | Aspekte: ${frage.handlungsaspekte.join(', ')}
+                            </div>--->
                             <div class="mc-group">
                                 ${frage.antworten.map((antwort, idx) => `
                                     <label class="mc-option">
@@ -212,6 +234,30 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                     `;
                 }
             }).join('');
+        }
+
+        // NEUE FUNKTION: Mapping von Antworten auf Analysebereiche
+        function mapAntworten() {
+            const analyseWerte = {};
+
+            // Initialisiere alle Analysebereiche (nur noch 2 Ebenen: einschätzung und interesse)
+            ANALYSE_BEREICHE.forEach(bereich => {
+                analyseWerte[bereich] = { einschätzung: [], interesse: [] };
+            });
+
+            // Verteile Antworten auf Analysebereiche basierend auf Handlungsaspekten
+            Object.entries(antworten).forEach(([fragenId, wert]) => {
+                const frage = FRAGEN.find(f => f.id === parseInt(fragenId));
+                if (frage && frage.handlungsaspekte) {
+                    frage.handlungsaspekte.forEach(aspekt => {
+                        if (analyseWerte[aspekt]) {
+                            analyseWerte[aspekt][frage.ebene].push(wert);
+                        }
+                    });
+                }
+            });
+
+            return analyseWerte;
         }
 
         // Sammeln der persönlichen Daten aus dem Formular
@@ -297,31 +343,30 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
         // Ergebniszusammenfassung anzeigen
         function renderResultsSummary() {
             const resultContainer = document.getElementById('resultsSummary');
-            
-            // Ergebnisse für jeden Bereich berechnen
-            const bereichErgebnisse = BEREICHE.map(bereich => {
-                const bereichFragen = FRAGEN.filter(frage => frage.bereich === bereich);
-                const ebenen = ['subjektiv', 'objektiv', 'interesse'];
-                
+
+            // Verwende die gemappten Analysewerte
+            const analyseWerte = mapAntworten();
+
+            // Ergebnisse für jeden Analysebereich berechnen (nur noch 2 Ebenen)
+            const bereichErgebnisse = ANALYSE_BEREICHE.map(bereich => {
+                const ebenen = ['einschätzung', 'interesse'];
+
                 // Für jede Ebene Durchschnittswerte berechnen
                 const ebenenWerte = ebenen.map(ebene => {
-                    const ebenenFragen = bereichFragen.filter(frage => frage.ebene === ebene);
-                    const beantworteteFragen = ebenenFragen.filter(frage => antworten[frage.id] !== undefined);
-                    
-                    if (beantworteteFragen.length === 0) return 0;
-                    
-                    const summe = beantworteteFragen.reduce((sum, frage) => sum + antworten[frage.id], 0);
-                    return (summe / beantworteteFragen.length).toFixed(1);
+                    const werte = analyseWerte[bereich][ebene];
+                    if (werte.length === 0) return '0.0';
+
+                    const summe = werte.reduce((sum, wert) => sum + wert, 0);
+                    return (summe / werte.length).toFixed(1);
                 });
-                
+
                 // HTML für einen Bereich generieren
                 return `
                     <div style="margin-bottom: 10px; font-size: 0.8em;">
                         <strong>${bereich}</strong>
                         <ul style="margin-top: 5px;">
-                            <li>Subjektiv: ${ebenenWerte[0]}</li>
-                            <li>Objektiv: ${ebenenWerte[1]}</li>
-                            <li>Interesse: ${ebenenWerte[2]}</li>
+                            <li>Einschätzung: ${ebenenWerte[0]}</li>
+                            <li>Interesse: ${ebenenWerte[1]}</li>
                         </ul>
                     </div>
                 `;
@@ -446,10 +491,9 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             const canvas = document.getElementById('radarCanvas');
             const ctx = setupCanvas(canvas);
 
-            // Aktuelle Farbeinstellungen auslesen
-            const subjektivColor = document.getElementById('subjektiv-color').value;
-            const objektivColor = document.getElementById('objektiv-color').value;
-            const interesseColor = document.getElementById('interesse-color').value;
+            // Aktuelle Farbeinstellungen auslesen (nur noch 2 Ebenen)
+            const subjektivColor = document.getElementById('subjektiv-color')?.value || '#2563eb';
+            const interesseColor = document.getElementById('interesse-color')?.value || '#dc2626';
             
             // Alpha-Werte für Füllfarben erstellen (20% Deckkraft)
             const getTransparentColor = (hexColor) => {
@@ -470,8 +514,8 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             // Canvas löschen für Neuzeichnung
             ctx.clearRect(0, 0, width, height);
 
-            // Berechne Winkel zwischen Achsen basierend auf Anzahl der Bereiche
-            const anzahlBereiche = BEREICHE.length;
+            // Berechne Winkel zwischen Achsen basierend auf Anzahl der ANALYSE_BEREICHE
+            const anzahlBereiche = ANALYSE_BEREICHE.length;
             const winkel = (2 * Math.PI) / anzahlBereiche;
 
             // Hilfsfunktion zum Zeichnen der verschiedenen Marker
@@ -484,7 +528,6 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                     case 'circle': // Kreis für subjektive Werte
                         ctx.beginPath();
                         ctx.arc(x, y, 8, 0, 2 * Math.PI);
-                        //ctx.fill();
                         ctx.stroke();
                         break;
                     case 'triangle': // Dreieck für objektive Werte
@@ -493,13 +536,11 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                         ctx.lineTo(x + 9.2, y + 8);
                         ctx.lineTo(x - 9.2, y + 8);
                         ctx.closePath();
-                        //ctx.fill();
                         ctx.stroke();
                         break;
                     case 'square': // Quadrat für Interesse-Werte
                         ctx.beginPath();
                         ctx.rect(x - 6, y - 6, 12, 12);
-                        //ctx.fill();
                         ctx.stroke();
                         break;
                 }
@@ -510,14 +551,28 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                 ctx.beginPath();
                 ctx.strokeStyle = '#d1d5db';
                 ctx.lineWidth = 1;
-                
+
                 // Berechne den aktuellen Radius (von innen nach aussen)
                 const currentRadius = radius * (r / 3);
-                
+
                 // Zeichne einen Kreis mit dem aktuellen Radius
                 ctx.arc(centerX, centerY, currentRadius, 0, 2 * Math.PI);
                 ctx.stroke();
             }
+
+            // Hinweis: Einschätzung wird von innen nach aussen besser
+            ctx.font = 'italic 24px Roboto, sans-serif';
+            ctx.fillStyle = '#6b7280';
+            ctx.textAlign = 'right';
+            // Pfeil nach aussen oben rechts
+            const hinweisX = centerX + radius * 0.7;
+            const hinweisY = centerY - radius * 0.7;
+            ctx.save();
+            ctx.translate(hinweisX, hinweisY);
+            ctx.rotate(-Math.PI / 4); // 45° nach oben rechts
+            ctx.fillText('besser →', 0, 0);
+            ctx.restore();
+            ctx.textAlign = 'left';
 
             // Achsenlinien vom Zentrum zu den äusseren Punkten
             ctx.beginPath();
@@ -533,10 +588,10 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             ctx.stroke();
 
             // Beschriftungen der Achsen
-            ctx.font = 'bold 30px Arial';
+            ctx.font = 'bold 30px Roboto, sans-serif';
             ctx.fillStyle = '#000';
             
-            BEREICHE.forEach((bereich, i) => {
+            ANALYSE_BEREICHE.forEach((bereich, i) => {
                 const angle = i * winkel - Math.PI / 2;
                 const labelRadius = radius + 30; // Abstand für die Beschriftungen
                 let x = centerX + labelRadius * Math.cos(angle);
@@ -562,53 +617,39 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
                 const lines = splitBereichLabel(bereich);
                 
                 // Erste Zeile (kleiner Abstand nach oben)
-                ctx.font = 'bold 30px Arial';
+                ctx.font = 'bold 30px Roboto, sans-serif';
                 ctx.fillText(lines[0], x, y - 15);
                 
                 // Zweite Zeile (kleiner Abstand nach unten)
-                ctx.font = '30px Arial';
+                ctx.font = '30px Roboto, sans-serif';
                 ctx.fillText(lines[1], x, y + 15);
             });
             // Zurücksetzen des textAlign
             ctx.textAlign = 'left';
 
-            // Daten aggregieren und normalisieren
-            const aggregierteWerte = BEREICHE.reduce((acc, bereich) => {
-                acc[bereich] = {
-                    subjektiv: [],
-                    objektiv: [],
-                    interesse: []
-                };
-                return acc;
-            }, {});
+            // NEUE DATENVERARBEITUNG: Verwende gemappte Werte
+            const analyseWerte = mapAntworten();
 
-            // Sortiere Antworten nach Bereichen und Ebenen
-            Object.entries(antworten).forEach(([fragenId, wert]) => {
-                const frage = FRAGEN.find(f => f.id === parseInt(fragenId));
-                if (frage) {
-                    aggregierteWerte[frage.bereich][frage.ebene].push(wert);
-                }
+            // Berechne Durchschnittswerte für jede Kategorie in jedem Analysebereich
+            const chartData = ANALYSE_BEREICHE.map(bereich => {
+                const bereichData = analyseWerte[bereich];
+                return {
+                    bereich,
+                    einschätzung: durchschnitt(bereichData.einschätzung),
+                    interesse: durchschnitt(bereichData.interesse)
+                };
             });
 
-            // Berechne Durchschnittswerte für jede Kategorie
-            const chartData = BEREICHE.map(bereich => ({
-                bereich,
-                subjektiv: durchschnitt(aggregierteWerte[bereich].subjektiv),
-                objektiv: durchschnitt(aggregierteWerte[bereich].objektiv),
-                interesse: durchschnitt(aggregierteWerte[bereich].interesse)
-            }));
-
-            // Definition der Ebenen mit ihren Eigenschaften und den ausgewählten Farben
+            // Definition der Ebenen mit ihren Eigenschaften und den ausgewählten Farben (nur noch 2 Ebenen)
             const ebenen = [
-                { name: 'subjektiv', farbe: [getTransparentColor(subjektivColor), subjektivColor], marker: 'circle' },
-                { name: 'objektiv', farbe: [getTransparentColor(objektivColor), objektivColor], marker: 'triangle' },
+                { name: 'einschätzung', farbe: [getTransparentColor(subjektivColor), subjektivColor], marker: 'circle' },
                 { name: 'interesse', farbe: [getTransparentColor(interesseColor), interesseColor], marker: 'square' }
             ];
 
             // Zeichne die Datenpunkte und Verbindungslinien für jede Ebene
             ebenen.forEach((ebene) => {
                 const punkte = chartData.map((data, i) => {
-                    const normalisierterWert = data[ebene.name] / 3; // Werte auf 0-1 normalisieren
+                    const normalisierterWert = (data[ebene.name]) / 3; // Werte auf 0-1 normalisieren
                     const angle = i * winkel - Math.PI / 2;
                     return {
                         x: centerX + ((radius * normalisierterWert)) * Math.cos(angle),
@@ -644,32 +685,25 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             });
             
             // Auch die Farben in der Legende aktualisieren
-            updateLegendColors(subjektivColor, objektivColor, interesseColor);
+            updateLegendColors(subjektivColor, interesseColor);
         }
         
-        // Funktion zum Aktualisieren der Farben in der Legende
-        function updateLegendColors(subjektivColor, objektivColor, interesseColor) {
+        // Funktion zum Aktualisieren der Farben in der Legende (nur noch 2 Ebenen)
+        function updateLegendColors(einschätzungColor, interesseColor) {
             // Finde alle SVG-Elemente in der Legende
             const legendItems = document.querySelectorAll('.legend-item svg');
-            
+
             // Aktualisiere die Farben der SVG-Elemente
-            if (legendItems.length >= 3) {
-                // Subjektiv (Kreis)
-                const subjektivSVG = legendItems[0].querySelector('circle');
-                if (subjektivSVG) {
-                    subjektivSVG.setAttribute('fill', '#fff'); //anstatt subjektivColor
-                    subjektivSVG.setAttribute('stroke', subjektivColor);
+            if (legendItems.length >= 2) {
+                // Einschätzung (Kreis)
+                const einschätzungSVG = legendItems[0].querySelector('circle');
+                if (einschätzungSVG) {
+                    einschätzungSVG.setAttribute('fill', '#fff');
+                    einschätzungSVG.setAttribute('stroke', einschätzungColor);
                 }
-                
-                // Objektiv (Dreieck)
-                const objektivSVG = legendItems[1].querySelector('path');
-                if (objektivSVG) {
-                    objektivSVG.setAttribute('fill', '#fff');
-                    objektivSVG.setAttribute('stroke', objektivColor);
-                }
-                
+
                 // Interesse (Rechteck)
-                const interesseSVG = legendItems[2].querySelector('rect');
+                const interesseSVG = legendItems[1].querySelector('rect');
                 if (interesseSVG) {
                     interesseSVG.setAttribute('fill', '#fff');
                     interesseSVG.setAttribute('stroke', interesseColor);
@@ -684,11 +718,12 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
         
         // Funktion zum Zurücksetzen der Farben auf die Standardwerte
         function resetChartColors() {
-            // Standard-Farben setzen
-            document.getElementById('subjektiv-color').value = '#2563eb';
-            document.getElementById('objektiv-color').value = '#16a34a';
-            document.getElementById('interesse-color').value = '#dc2626';
-            
+            // Standard-Farben setzen (nur noch 2 Ebenen)
+            const subjektivInput = document.getElementById('subjektiv-color');
+            const interesseInput = document.getElementById('interesse-color');
+            if (subjektivInput) subjektivInput.value = '#2563eb';
+            if (interesseInput) interesseInput.value = '#dc2626';
+
             // Chart neu zeichnen
             drawRadar();
         }
@@ -698,13 +733,37 @@ import { STUDIENFAECHER, FACH_BESCHREIBUNGEN, LERNGELEGENHEITEN } from './config
             if (werte.length === 0) return MIN_WERT;
             return werte.reduce((a, b) => a + b, 0) / werte.length;
         }
+
+        // Hilfsfunktion: Bedarf in Prädikat umwandeln (Skala 1-3, theoretisch bis 4)
+        function bedarfZuPraedikat(bedarf) {
+            if (bedarf <= 1.5) return 'wenig';
+            if (bedarf <= 2.5) return 'mittel';
+            return 'viel';
+        }
+
+        // Hilfsfunktion: Interesse in Prädikat umwandeln (Skala 1-3)
+        function interesseZuPraedikat(interesse) {
+            if (interesse <= 1.5) return 'tief';
+            if (interesse <= 2.5) return 'mittel';
+            return 'hoch';
+        }
         
         // Hilfsfunktion: Bereichsnamen in zwei Zeilen aufteilen
         function splitBereichLabel(text) {
-            // Aufteilen bei ": " (z.B. "Lehrperson: Wissen" wird zu ["LP:", "Wissen"])
-            const match = text.match(/^([^:]+):\s*(.+)$/);
-            if (match) {
-                return [match[1] + ":", match[2]];
+            // Spezielle Behandlung für längere Begriffe
+            const replacements = {
+                "Lernbegleitung und Förderung": ["Lernbegleitung", "& Förderung"],
+                "Grössen und Funktionen": ["Grössen &", "Funktionen"],
+                "Operieren und Benennen": ["Operieren &", "Benennen"],
+                "Erforschen und Argumentieren": ["Erforschen &", "Argumentieren"],
+                "Mathematisieren und Darstellen": ["Mathematisieren", "& Darstellen"],
+                "Zahl und Variable": ["Zahl &", "Variable"],
+                "Form und Raum": ["Form &", "Raum"],
+                "Daten und Zufall": ["Daten &", "Zufall"]
+            };
+            
+            if (replacements[text]) {
+                return replacements[text];
             }
             
             // Fallback: Teile nach dem ersten Wort
@@ -760,7 +819,7 @@ function goToPage(pageIndex) {
 // Aktivieren und Initialisieren der neuen Seite
 function activateAndInitializePage(pageIndex) {
     let newActivePage = null;
-    
+
     // Seite basierend auf dem Index ermitteln und initialisieren
     if (pageIndex === 0) {
         newActivePage = document.getElementById('page-start');
@@ -768,11 +827,17 @@ function activateAndInitializePage(pageIndex) {
     else if (pageIndex === 1) {
         newActivePage = document.getElementById('page-0');
         initializePersonalDataPage();
-    } 
-    else if (pageIndex === pages.length + 1) {
+    }
+    else if (pageIndex === pages.length) {
+        // Spidergraph / Radar-Chart (vorletzte Seite)
         newActivePage = document.getElementById('page-final');
         initializeResultsPage();
-    } 
+    }
+    else if (pageIndex === pages.length + 1) {
+        // Viererfeld / Prioritätsmatrix (letzte Seite)
+        newActivePage = document.getElementById('page-priority');
+        initializePriorityPage();
+    }
     else {
         newActivePage = document.getElementById(pages[pageIndex - 2]);
         renderFragen();
@@ -799,7 +864,7 @@ function updateUIElements() {
     // Navigation-Buttons aktualisieren
     document.getElementById('prevButton').disabled = currentPage === 0;
     document.getElementById('nextButton').textContent = 
-        currentPage === pages.length + 1 ? 'Abschliessen' : 'Weiter';
+        currentPage === pages.length + 1 ? 'Diese Seite drucken' : 'Weiter';
     
     // Fortschrittsanzeige aktualisieren
     updateProgressIndicator();
@@ -866,6 +931,19 @@ function initializePersonalDataPage() {
     }
 }
 
+// Initialisierung der Prioritäts-Seite
+function initializePriorityPage() {
+    // Verzögerung zum Zeichnen des Viererfeld-Diagramms
+    setTimeout(() => {
+        try {
+            drawPriorityMatrix();
+            initPriorityCanvasHover(); // Hover-Funktionalität aktivieren
+        } catch (e) {
+            console.error("Fehler beim Zeichnen des Viererfeld-Charts:", e);
+        }
+    }, 100);
+}
+
 // Initialisierung der Ergebnisseite
 function initializeResultsPage() {
     renderPersonalData();
@@ -891,49 +969,770 @@ document.getElementById('prevButton').addEventListener('click', () => {
 document.getElementById('nextButton').addEventListener('click', () => {
     if (currentPage < pages.length + 1) {
         goToPage(currentPage + 1);
-        // Nach oben scrollen (bereits in goToPage integriert)
+        // Ändere diesen Code im nextButton Event-Listener
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth'
+        });
     } else {
         // Formular abschliessen und Druck-Dialog öffnen
         window.print();
     }
 });
 
-
-        // Event-Listener für Navigation-Buttons
-        document.getElementById('prevButton').addEventListener('click', () => {
-            if (currentPage > 0) {
-                goToPage(currentPage - 1);
-            }
-        });
-
-        document.getElementById('nextButton').addEventListener('click', () => {
-            if (currentPage < pages.length + 1) {
-                goToPage(currentPage + 1);
-                // Ändere diesen Code im nextButton Event-Listener
-                window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: 'smooth'
-                });
-            } else {
-                // Formular abschliessen und Druck-Dialog öffnen
-                window.print();
-            }
-        });
-
         // Responsive Canvas-Anpassung bei Fenstergrössen-Änderung
         window.addEventListener('resize', () => {
-            if (currentPage === pages.length + 1) {
-                drawRadar(); // Radar-Chart neu zeichnen bei Grössenänderung
+            if (currentPage === pages.length) {
+                drawRadar(); // Radar-Chart neu zeichnen bei Grössenänderung (vorletzte Seite)
+            } else if (currentPage === pages.length + 1) {
+                drawPriorityMatrix(); // Viererfeld neu zeichnen bei Grössenänderung (letzte Seite)
             }
         });
 
         // Initialisierung der Anwendung
         function init() {
             initPages();
+            initTestMode(); // NEUE ZEILE: Test-Modus Listener aktivieren
+            goToPage(0); // Erste Seite laden (Startseite)
+        }
+
+        // =========================================================
+        // NEUE FUNKTIONEN FÜR VIERERFELD-ANALYSE
+        // =========================================================
+
+        // Berechnung der Prioritätspositionen für alle Analysebereiche
+        function calculatePriorityPositions() {
+            const analyseWerte = mapAntworten();
+            const priorityData = [];
+
+            ANALYSE_BEREICHE.forEach(bereich => {
+                const bereichData = analyseWerte[bereich];
+
+                // Durchschnittswerte berechnen (nur noch 2 Ebenen)
+                const einschätzung = durchschnitt(bereichData.einschätzung);
+                const interesse = durchschnitt(bereichData.interesse);
+
+                // Weiterentwicklungsbedarf = MAX_WERT + 1 - Einschätzung
+                // Je höher die Selbsteinschätzung, desto tiefer der Bedarf
+                const bedarf = MAX_WERT + 1 - einschätzung;
+
+                // Position im Viererfeld bestimmen
+                const position = {
+                    bereich: bereich,
+                    x: interesse,      // Interesse horizontal (0-3)
+                    y: bedarf,         // Bedarf vertikal (1-4)
+                    quadrant: getQuadrant(interesse, bedarf),
+                    einschätzung: einschätzung,
+                    interesse: interesse,
+                    bedarf: bedarf
+                };
+
+                priorityData.push(position);
+            });
+
+            return priorityData;
+        }
+
+        // Quadrant bestimmen
+        // Schwellenwert 2 entspricht der visuellen Mittellinie im Chart
+        function getQuadrant(interesse, bedarf) {
+            const istHohesInteresse = interesse > 2; // > visuelle Mitte
+            const istHoherBedarf = bedarf > 2;       // > visuelle Mitte
+
+            if (istHoherBedarf && istHohesInteresse) return "priority-1";    // 1. Priorität
+            if (istHoherBedarf && !istHohesInteresse) return "priority-2";   // 2. Priorität
+            if (!istHoherBedarf && istHohesInteresse) return "priority-3";   // 3. Priorität
+            return "priority-4"; // Ohne Priorität
+        }
+
+        // Viererfeld zeichnen
+        function drawPriorityMatrix() {
+            const canvas = document.getElementById('priorityCanvas');
+            if (!canvas) return;
             
-            // Erste Seite laden (Startseite)
-            goToPage(0);
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Canvas löschen
+            ctx.clearRect(0, 0, width, height);
+            
+            // Grundeinstellungen
+            const margin = 80;
+            const chartWidth = width - 2 * margin;
+            const chartHeight = height - 2 * margin;
+            
+            // Prioritätsdaten laden
+            const priorityData = calculatePriorityPositions();
+            
+            // Achsen zeichnen
+            drawAxes(ctx, margin, chartWidth, chartHeight);
+            
+            // Quadranten zeichnen
+            drawQuadrants(ctx, margin, chartWidth, chartHeight);
+            
+            // Datenpunkte zeichnen
+            drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData);
+            
+            // Beschriftungen zeichnen
+            drawLabels(ctx, margin, chartWidth, chartHeight);
+        }
+
+        // Achsen zeichnen
+        function drawAxes(ctx, margin, chartWidth, chartHeight) {
+            ctx.strokeStyle = '#374151';
+            ctx.lineWidth = 2;
+            
+            // X-Achse (horizontal)
+            ctx.beginPath();
+            ctx.moveTo(margin, margin + chartHeight);
+            ctx.lineTo(margin + chartWidth, margin + chartHeight);
+            ctx.stroke();
+            
+            // Y-Achse (vertikal)
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, margin + chartHeight);
+            ctx.stroke();
+            
+            // Mittellinien für Quadranten
+            ctx.strokeStyle = '#9ca3af';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            
+            // Vertikale Mittellinie
+            ctx.beginPath();
+            ctx.moveTo(margin + chartWidth/2, margin);
+            ctx.lineTo(margin + chartWidth/2, margin + chartHeight);
+            ctx.stroke();
+            
+            // Horizontale Mittellinie
+            ctx.beginPath();
+            ctx.moveTo(margin, margin + chartHeight/2);
+            ctx.lineTo(margin + chartWidth, margin + chartHeight/2);
+            ctx.stroke();
+            
+            ctx.setLineDash([]); // Reset dash
+        }
+
+        // Quadranten einfärben
+        function drawQuadrants(ctx, margin, chartWidth, chartHeight) {
+            const halfWidth = chartWidth / 2;
+            const halfHeight = chartHeight / 2;
+            
+            // Quadrant 1: Rechts oben (Hoher Bedarf + Hohes Interesse) - Rot
+            ctx.fillStyle = 'rgba(220, 38, 38, 0.1)';
+            ctx.fillRect(margin + halfWidth, margin, halfWidth, halfHeight);
+            
+            // Quadrant 2: Links oben (Hoher Bedarf + Wenig Interesse) - Orange
+            ctx.fillStyle = 'rgba(217, 119, 6, 0.1)';
+            ctx.fillRect(margin, margin, halfWidth, halfHeight);
+            
+            // Quadrant 3: Rechts unten (Wenig Bedarf + Hohes Interesse) - Blau
+            ctx.fillStyle = 'rgba(37, 99, 235, 0.1)';
+            ctx.fillRect(margin + halfWidth, margin + halfHeight, halfWidth, halfHeight);
+            
+            // Quadrant 4: Links unten (Wenig Bedarf + Wenig Interesse) - Grau
+            ctx.fillStyle = 'rgba(107, 114, 128, 0.1)';
+            ctx.fillRect(margin, margin + halfHeight, halfWidth, halfHeight);
+        }
+
+// Globale Variable für Punkt-Positionen (für Hover-Detection)
+let priorityPointsData = [];
+
+// Datenpunkte zeichnen mit nummerierten Kreisen
+function drawDataPoints(ctx, margin, chartWidth, chartHeight, priorityData) {
+    const padding = 0.15;
+    const usableWidth = chartWidth * (1 - 2 * padding);
+    const usableHeight = chartHeight * (1 - 2 * padding);
+
+    // Farben je nach Quadrant
+    const colors = {
+        'priority-1': '#dc2626',
+        'priority-2': '#d97706',
+        'priority-3': '#2563eb',
+        'priority-4': '#6b7280'
+    };
+
+    // Sortiere nach Priorität für Nummerierung:
+    // 1. Nach Prioritätsfeld (1. Priorität zuerst)
+    // 2. Nach Bedarf (höherer Bedarf = weiter oben = tiefere Nummer)
+    const sortedData = [...priorityData].sort((a, b) => {
+        const priorityOrder = { 'priority-1': 1, 'priority-2': 2, 'priority-3': 3, 'priority-4': 4 };
+        if (priorityOrder[a.quadrant] !== priorityOrder[b.quadrant]) {
+            return priorityOrder[a.quadrant] - priorityOrder[b.quadrant];
+        }
+        // Innerhalb des gleichen Quadranten: höherer Bedarf zuerst
+        return b.bedarf - a.bedarf;
+    });
+
+    // Berechne Positionen für alle Punkte mit Nummerierung
+    const points = sortedData.map((point, index) => {
+        const normalizedX = (point.x - 1) / 2;
+        const normalizedY = (point.y - 1) / 2;
+        const x = margin + chartWidth * padding + normalizedX * usableWidth;
+        const y = margin + chartHeight * padding + (1 - normalizedY) * usableHeight;
+
+        return {
+            x: x,
+            y: y,
+            bereich: point.bereich,
+            quadrant: point.quadrant,
+            nummer: index + 1,
+            interesse: point.interesse,
+            bedarf: point.bedarf,
+            einschätzung: point.einschätzung
+        };
+    });
+
+    // Speichere für Hover-Detection
+    priorityPointsData = points;
+
+    // Zeichne nummerierte Punkte (grösserer Radius)
+    const pointRadius = 22;
+
+    points.forEach(point => {
+        // Farbiger Kreis
+        ctx.fillStyle = colors[point.quadrant];
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, pointRadius, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        // Nummer im Kreis (weisse Schrift)
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px Roboto, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(point.nummer.toString(), point.x, point.y);
+    });
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+
+    // Legende aktualisieren
+    updatePriorityLegend(points, colors);
+}
+
+// Legende für Prioritätsmatrix aktualisieren (mit Quadranten-Beschreibung)
+function updatePriorityLegend(points, colors) {
+    const legendContainer = document.getElementById('priority-points-legend');
+    if (!legendContainer) return;
+
+    // Gruppiere nach Quadrant mit Beschreibungen
+    const groups = {
+        'priority-1': {
+            label: '1. Priorität',
+            description: 'Viel Bedarf, hohes Interesse',
+            items: []
+        },
+        'priority-2': {
+            label: '2. Priorität',
+            description: 'Viel Bedarf, tiefes Interesse',
+            items: []
+        },
+        'priority-3': {
+            label: '3. Priorität',
+            description: 'Wenig Bedarf, hohes Interesse',
+            items: []
+        },
+        'priority-4': {
+            label: 'Ohne Priorität',
+            description: 'Wenig Bedarf, tiefes Interesse',
+            items: []
+        }
+    };
+
+    points.forEach(point => {
+        groups[point.quadrant].items.push(point);
+    });
+
+    // HTML generieren
+    let html = '<div class="points-legend-grid">';
+
+    Object.entries(groups).forEach(([quadrant, group]) => {
+        if (group.items.length > 0) {
+            html += `<div class="legend-group ${quadrant}">`;
+            html += `<h5>${group.label}</h5>`;
+            html += `<p class="legend-description">${group.description}</p>`;
+            html += '<ul>';
+            group.items.forEach(item => {
+                html += `<li>
+                    <span class="legend-number" style="background-color: ${colors[quadrant]}">${item.nummer}</span>
+                    <span class="legend-text">${item.bereich}</span>
+                </li>`;
+            });
+            html += '</ul></div>';
+        }
+    });
+
+    html += '</div>';
+    legendContainer.innerHTML = html;
+}
+
+// Hover-Funktionalität für Prioritätsmatrix
+function initPriorityCanvasHover() {
+    const canvas = document.getElementById('priorityCanvas');
+    const tooltip = document.getElementById('priority-tooltip');
+    if (!canvas || !tooltip) return;
+
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+
+        const pointRadius = 22;
+        let hoveredPoint = null;
+
+        // Finde Punkt unter dem Cursor
+        for (const point of priorityPointsData) {
+            const distance = Math.sqrt(
+                Math.pow(mouseX - point.x, 2) + Math.pow(mouseY - point.y, 2)
+            );
+            if (distance <= pointRadius * 1.5) {
+                hoveredPoint = point;
+                break;
+            }
+        }
+
+        if (hoveredPoint) {
+            tooltip.innerHTML = `
+                <strong>${hoveredPoint.bereich}</strong><br>
+                <span class="tooltip-detail">Bedarf: ${bedarfZuPraedikat(hoveredPoint.bedarf)}</span><br>
+                <span class="tooltip-detail">Interesse: ${interesseZuPraedikat(hoveredPoint.interesse)}</span>
+            `;
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            canvas.style.cursor = 'pointer';
+        } else {
+            tooltip.style.display = 'none';
+            canvas.style.cursor = 'default';
+        }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+        tooltip.style.display = 'none';
+        canvas.style.cursor = 'default';
+    });
+}
+
+        // Beschriftungen zeichnen
+        function drawLabels(ctx, margin, chartWidth, chartHeight) {
+            ctx.fillStyle = '#374151';
+            ctx.font = 'bold 28px Roboto, sans-serif';
+            
+            // X-Achsen-Beschriftung (Interesse)
+            ctx.textAlign = 'center';
+            ctx.fillText('Interesse', margin + chartWidth/2, margin + chartHeight + 40);
+            
+            // Y-Achsen-Beschriftung (Weiterentwicklungsbedarf)
+            ctx.save();
+            ctx.translate(40, margin + chartHeight/2);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillText('Weiterentwicklungspotenzial', 0, 0);
+            ctx.restore();
+            
+            // Skala-Beschriftungen
+            ctx.font = '20px Roboto, sans-serif';
+            ctx.fillStyle = '#6b7280'; 
+            
+            // X-Achse Skala
+            ctx.textAlign = 'center';
+            ctx.fillText('niedrig', margin + chartWidth * 0.25, margin + chartHeight + 40);
+            ctx.fillText('hoch', margin + chartWidth * 0.75, margin + chartHeight + 40);
+            
+            // Y-Achse Skala
+            ctx.textAlign = 'center';
+            ctx.fillText('niedrig', margin - 40, margin + chartHeight * 0.85);
+            ctx.fillText('hoch', margin - 40, margin + chartHeight * 0.15);
+            
+            // Quadranten-Labels
+            ctx.font = 'bold 32px Roboto, sans-serif';
+            ctx.fillStyle = '#000';
+            
+            ctx.fillText('1. Priorität', margin + chartWidth * 0.75, margin + 40);
+            ctx.fillText('2. Priorität', margin + chartWidth * 0.25, margin + 40);
+            ctx.fillText('3. Priorität', margin + chartWidth * 0.75, margin + chartHeight - 20);
+            ctx.fillText('Ohne Priorität', margin + chartWidth * 0.25, margin + chartHeight - 20);
+            
+            ctx.textAlign = 'left'; // Reset
+        }
+
+// =========================================================
+// HTML2CANVAS EXPORT FUNKTIONEN (ERWEITERT)
+// =========================================================
+
+async function exportPageAsImage(pageId, filename, padding = 20) {
+    const page = document.getElementById(pageId);
+    
+    try {
+        const canvas = await html2canvas(page, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            logging: false,
+            useCORS: true,
+            onclone: (clonedDoc) => {
+                // Navigation im Klon ausblenden
+                const nav = clonedDoc.querySelector('.navigation');
+                if (nav) nav.style.display = 'none';
+
+                // Export-Buttons im Klon ausblenden
+                const buttons = clonedDoc.querySelectorAll('.export-button, .combined-export-button');
+                buttons.forEach(btn => btn.style.display = 'none');
+
+                // Farbauswahl-Container ausblenden
+                const colorPicker = clonedDoc.querySelector('.color-picker-container');
+                if (colorPicker) colorPicker.style.display = 'none';
+
+                // Tooltip ausblenden (falls sichtbar)
+                const tooltip = clonedDoc.querySelector('.priority-tooltip');
+                if (tooltip) tooltip.style.display = 'none';
+            }
+        });
+        
+        // Neues Canvas mit Rand erstellen
+        const paddedCanvas = document.createElement('canvas');
+        paddedCanvas.width = canvas.width + (padding * 2);
+        paddedCanvas.height = canvas.height + (padding * 2);
+        
+        const ctx = paddedCanvas.getContext('2d');
+        
+        // Weißer Hintergrund mit Rand
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, paddedCanvas.width, paddedCanvas.height);
+        
+        // Original-Canvas mit Abstand einfügen
+        ctx.drawImage(canvas, padding, padding);
+        
+        // Download
+        paddedCanvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Fehler beim Export:', error);
+        return false;
+    }
+}
+
+async function exportPriorityPage() {
+    const button = document.querySelector('#page-priority .export-button');
+    if (button) button.disabled = true;
+    
+    const success = await exportPageAsImage('page-priority', 'prioritaetsmatrix.png', 30);
+    
+    if (!success) {
+        alert('Fehler beim Exportieren. Bitte versuche es erneut.');
+    }
+    
+    if (button) button.disabled = false;
+}
+
+async function exportFinalPage() {
+    const button = document.querySelector('#page-final .export-button');
+    if (button) button.disabled = true;
+    
+    const success = await exportPageAsImage('page-final', 'kompetenzanalyse-ergebnis.png', 30);
+    
+    if (!success) {
+        alert('Fehler beim Exportieren. Bitte versuche es erneut.');
+    }
+    
+    if (button) button.disabled = false;
+}
+
+async function exportBothPages() {
+    const button = document.querySelector('.combined-export-button');
+    if (button) {
+        button.disabled = true;
+        button.textContent = 'Exportiere...';
+    }
+    
+    // Aktuelle Seite merken
+    const currentPageBackup = currentPage;
+    
+    // Beide Seiten referenzieren
+    const priorityPage = document.getElementById('page-priority');
+    const finalPage = document.getElementById('page-final');
+    
+    // Original Classes speichern
+    const priorityClasses = priorityPage.className;
+    const finalClasses = finalPage.className;
+    
+    try {
+        // Priority-Seite aktivieren und exportieren
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none';
+        });
+        
+        priorityPage.classList.add('active');
+        priorityPage.style.display = 'block';
+        priorityPage.style.opacity = '1';
+        
+        // Canvas neu zeichnen mit voller Größe
+        await new Promise(resolve => setTimeout(resolve, 100));
+        drawPriorityMatrix();
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Erste Seite exportieren
+        const success1 = await exportPageAsImage('page-priority', '1_prioritaetsmatrix.png', 30);
+        
+        // Zur Final-Seite wechseln
+        priorityPage.classList.remove('active');
+        priorityPage.style.display = 'none';
+        
+        finalPage.classList.add('active');
+        finalPage.style.display = 'block';
+        finalPage.style.opacity = '1';
+        
+        // Canvas neu zeichnen mit voller Größe
+        await new Promise(resolve => setTimeout(resolve, 100));
+        drawRadar();
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Zweite Seite exportieren
+        const success2 = await exportPageAsImage('page-final', '2_kompetenzanalyse-ergebnis.png', 30);
+        
+        if (success1 && success2) {
+            // Erfolgsmeldung
+            const message = document.createElement('div');
+            message.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #10b981;
+                color: white;
+                padding: 20px 30px;
+                border-radius: 8px;
+                font-weight: bold;
+                z-index: 9999;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            `;
+            message.textContent = 'Beide Seiten erfolgreich gespeichert!';
+            document.body.appendChild(message);
+            
+            setTimeout(() => {
+                message.style.opacity = '0';
+                message.style.transition = 'opacity 0.5s';
+                setTimeout(() => message.remove(), 500);
+            }, 2000);
+        } else {
+            alert('Fehler beim Exportieren einer oder beider Seiten.');
+        }
+    } catch (error) {
+        console.error('Fehler beim kombinierten Export:', error);
+        alert('Fehler beim Exportieren. Bitte versuche es erneut.');
+    } finally {
+        // Zurück zur ursprünglichen Seite
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.remove('active');
+            p.style.display = 'none';
+        });
+
+        // Original-Seite wieder aktivieren
+        // Neue Reihenfolge: pages.length = Spidergraph (final), pages.length + 1 = Viererfeld (priority)
+        if (currentPageBackup === pages.length) {
+            finalPage.classList.add('active');
+            finalPage.style.display = 'block';
+            finalPage.style.opacity = '1';
+            drawRadar();
+        } else if (currentPageBackup === pages.length + 1) {
+            priorityPage.classList.add('active');
+            priorityPage.style.display = 'block';
+            priorityPage.style.opacity = '1';
+            drawPriorityMatrix();
+        }
+        
+        // Button wieder aktivieren
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Beide Ergebnisseiten als Bilder speichern';
+        }
+    }
+}
+
+// =========================================================
+// VERSTECKTE TEST-FUNKTION
+// =========================================================
+
+// Test-Daten: Mittlere bis hohe Werte für realistische Darstellung
+/*const TEST_ANTWORTEN = {
+    // Zahl und Variable
+    101: 2, 102: 2, 103: 3, 104: 2, 105: 3, 106: 2, 107: 1, 
+    108: 2, 109: 2, 110: 2, 111: 2, 112: 2, 113: 2, 114: 2, 115: 3,
+    
+    // Form und Raum
+    201: 2, 202: 3, 203: 2, 204: 2, 205: 2, 206: 2, 207: 2,
+    208: 2, 209: 2, 210: 2, 211: 2, 212: 1, 213: 2, 214: 2, 215: 3, 216: 2,
+    
+    // Größen und Funktionen
+    301: 2, 302: 3, 303: 2, 304: 2, 305: 2, 306: 2, 307: 2,
+    308: 2, 309: 2, 310: 2,
+    
+    // Daten und Zufall
+    401: 2, 402: 3, 403: 2, 404: 2, 405: 2, 406: 2, 407: 2,
+    
+    // Planung
+    501: 2, 502: 3, 503: 3, 504: 2,
+    
+    // Beurteilung
+    61: 2, 62: 3, 63: 2, 64: 2,
+    
+    // Lernbegleitung und Förderung
+    71: 2, 72: 3, 73: 2, 74: 2
+};
+*/
+
+// Variierter Test-Datensatz für alle Quadranten-Kombinationen
+// Bedarf = 4 - Einschätzung: Einschätzung 1→Bedarf 3, Einschätzung 3→Bedarf 1
+// IDs angepasst an neue Nummerierung (v3)
+const TEST_ANTWORTEN = {
+    // =====================================================
+    // Zahl und Variable: Einschätzung TIEF (1) → Bedarf HOCH (3), Interesse TIEF (1)
+    // → Erwartet: Priority 2 (Viel Bedarf, tiefes Interesse)
+    // =====================================================
+    101: 1, 102: 1, 103: 1, 104: 1, 105: 1, 106: 1, 107: 1,
+    108: 1, 109: 1, 110: 1, 111: 1, 112: 1, 113: 1,
+    114: 1, 115: 1, 116: 1,  // Interesse: tief
+
+    // =====================================================
+    // Form und Raum: Einschätzung HOCH (3) → Bedarf TIEF (1), Interesse HOCH (3)
+    // → Erwartet: Priority 3 (Wenig Bedarf, hohes Interesse)
+    // =====================================================
+    201: 3, 202: 3, 203: 3, 204: 3, 205: 3, 206: 3, 207: 3,
+    208: 3, 209: 3, 210: 3, 211: 3,
+    212: 3, 213: 3, 214: 3, 215: 3,  // Interesse: hoch
+
+    // =====================================================
+    // Grössen und Funktionen: Einschätzung HOCH (3) → Bedarf TIEF (1), Interesse TIEF (1)
+    // → Erwartet: Priority 4 (Wenig Bedarf, tiefes Interesse)
+    // =====================================================
+    301: 3, 302: 3, 303: 3, 304: 3, 305: 3, 306: 3, 307: 3, 308: 3,
+    309: 1, 310: 1, 311: 1, 312: 1,  // Interesse: tief
+
+    // =====================================================
+    // Daten und Zufall: Einschätzung TIEF (1) → Bedarf HOCH (3), Interesse HOCH (3)
+    // → Erwartet: Priority 1 (Viel Bedarf, hohes Interesse)
+    // =====================================================
+    401: 1, 402: 1, 403: 1, 404: 1, 405: 1,
+    406: 3, 407: 3, 408: 3, 409: 3,  // Interesse: hoch
+
+    // =====================================================
+    // Planung: Einschätzung MITTEL (2) → Bedarf MITTEL (2), Interesse HOCH (3)
+    // → Je nach Grenzwert: könnte Priority 1 oder 3 sein
+    // =====================================================
+    501: 2, 502: 2,
+    503: 3,  // Interesse: hoch
+
+    // =====================================================
+    // Beurteilung: Einschätzung MITTEL (2) → Bedarf MITTEL (2), Interesse TIEF (1)
+    // → Je nach Grenzwert: könnte Priority 2 oder 4 sein
+    // =====================================================
+    601: 2, 602: 2,
+    603: 1,  // Interesse: tief
+
+    // =====================================================
+    // Lernbegleitung und Förderung: Einschätzung TIEF (1) → Bedarf HOCH (3), Interesse MITTEL (2)
+    // → Priority 2 (Viel Bedarf, eher tiefes Interesse)
+    // =====================================================
+    701: 1, 702: 1,
+    703: 2  // Interesse: mittel
+};
+
+const TEST_PERSONAL_DATA = {
+    vorname: 'Test',
+    nachname: 'Person',
+    matrikelnummer: '12345678',
+    email: 'test.person@phbern.ch',
+    studienfaecher: ['M', 'D', 'NT'],
+    lerngelegenheiten: ['mikroplanung_math', 'beurteilung_math']
+};
+
+// Keypress-Listener für versteckte Test-Funktion
+let keyBuffer = '';
+let keyTimeout = null;
+
+function initTestMode() {
+    document.addEventListener('keypress', (e) => {
+        // Buchstaben zum Buffer hinzufügen
+        keyBuffer += e.key.toLowerCase();
+        
+        // Timeout zurücksetzen
+        if (keyTimeout) clearTimeout(keyTimeout);
+        keyTimeout = setTimeout(() => {
+            keyBuffer = '';
+        }, 2000); // Buffer nach 2 Sekunden zurücksetzen
+        
+        // Prüfen ob "testx" eingegeben wurde
+        if (keyBuffer.includes('testing')) {
+            activateTestMode();
+            keyBuffer = ''; // Buffer zurücksetzen
+        }
+    });
+}
+
+        function activateTestMode() {
+            console.log('🧪 Test-Modus aktiviert!');
+            
+            // Antworten füllen
+            antworten = { ...TEST_ANTWORTEN };
+            
+            // Persönliche Daten füllen
+            document.getElementById('vorname').value = TEST_PERSONAL_DATA.vorname;
+            document.getElementById('nachname').value = TEST_PERSONAL_DATA.nachname;
+            document.getElementById('matrikelnummer').value = TEST_PERSONAL_DATA.matrikelnummer;
+            document.getElementById('email').value = TEST_PERSONAL_DATA.email;
+            
+            // Studienfächer auswählen
+            selectedSubjects = [...TEST_PERSONAL_DATA.studienfaecher];
+            
+            // Lerngelegenheiten auswählen
+            selectedLerngelegenheiten = [...TEST_PERSONAL_DATA.lerngelegenheiten];
+            
+            // Persönliche Daten sammeln
+            collectPersonalData();
+
+            // Zur letzten Seite (Priority-Matrix / Viererfeld) springen
+            goToPage(pages.length + 1);
+            
+            // Visuelles Feedback
+            const testIndicator = document.createElement('div');
+            testIndicator.style.cssText = `
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background: #fbbf24;
+                color: #92400e;
+                padding: 10px 15px;
+                border-radius: 6px;
+                font-weight: bold;
+                z-index: 9999;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            `;
+            testIndicator.textContent = '🧪 TEST-MODUS';
+            document.body.appendChild(testIndicator);
+            
+            // Indicator nach 3 Sekunden ausblenden
+            setTimeout(() => {
+                testIndicator.style.opacity = '0';
+                testIndicator.style.transition = 'opacity 0.5s';
+                setTimeout(() => testIndicator.remove(), 500);
+            }, 3000);
         }
 
         // Starte die Anwendung nach dem vollständigen Laden des DOM
@@ -946,4 +1745,9 @@ document.getElementById('nextButton').addEventListener('click', () => {
             window.handleLerngelegenheitSelection = handleLerngelegenheitSelection;
             window.updateSelectedLerngelegenheitenDisplay = updateSelectedLerngelegenheitenDisplay;
             window.removeLerngelegenheit = removeLerngelegenheit;
+            window.updateChartColors = updateChartColors;
+            window.resetChartColors = resetChartColors;
+            window.exportPriorityPage = exportPriorityPage;     // NEU
+            window.exportFinalPage = exportFinalPage;           // NEU
+            window.exportBothPages = exportBothPages;
         });
